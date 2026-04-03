@@ -1,5 +1,5 @@
-import { useState, useRef, useEffect } from 'react';
-import { Send, Paperclip, Smile, Phone, MoreVertical, ArrowLeft, Users } from 'lucide-react';
+import { useState, useRef, useEffect, useMemo } from 'react';
+import { Send, Paperclip, Smile, Phone, MoreVertical, ArrowLeft, Users, Hash } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Avatar } from './Avatar';
 import { messages, users, chats as defaultChats, type Message, type Chat } from '@/data/mockData';
@@ -10,17 +10,48 @@ interface ChatWindowProps {
   onBack?: () => void;
   onOpenGroupInfo?: () => void;
   extraChats?: Chat[];
+  /** When set, the window shows a topic thread instead of the main chat. */
+  topicId?: string;
+  topicName?: string;
+  topicIcon?: string;
+  /** External messages for topics (managed by parent). */
+  topicMessages?: Message[];
+  onTopicMessageSent?: (msg: Message) => void;
 }
 
-export function ChatWindow({ chatId, onBack, onOpenGroupInfo, extraChats = [] }: ChatWindowProps) {
+export function ChatWindow({
+  chatId,
+  onBack,
+  onOpenGroupInfo,
+  extraChats = [],
+  topicId,
+  topicName,
+  topicIcon,
+  topicMessages,
+  onTopicMessageSent,
+}: ChatWindowProps) {
   const allChats = [...defaultChats, ...extraChats];
   const chat = allChats.find(c => c.id === chatId);
+
+  // For regular chats, use local state from mock data.
+  // For topics, use the externally-provided topicMessages.
   const [localMessages, setLocalMessages] = useState<Message[]>(messages[chatId] || []);
   const [input, setInput] = useState('');
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => { setLocalMessages(messages[chatId] || []); }, [chatId]);
-  useEffect(() => { scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' }); }, [localMessages]);
+  const isTopic = !!topicId;
+  const displayMessages = useMemo(
+    () => (isTopic ? (topicMessages || []) : localMessages),
+    [isTopic, topicMessages, localMessages],
+  );
+
+  useEffect(() => {
+    if (!isTopic) setLocalMessages(messages[chatId] || []);
+  }, [chatId, isTopic]);
+
+  useEffect(() => {
+    scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' });
+  }, [displayMessages]);
 
   if (!chat) return null;
 
@@ -28,26 +59,36 @@ export function ChatWindow({ chatId, onBack, onOpenGroupInfo, extraChats = [] }:
   const chatName = chat.name || otherUser?.name || 'Unknown';
   const isOnline = otherUser?.online;
   const isGroup = chat.type === 'group';
-  const statusText = isGroup
-    ? `${chat.participants.length} участник(ов)`
-    : isOnline ? 'в сети' : `был(а) ${otherUser?.lastSeen || 'давно'}`;
+
+  // Header text depends on whether we're in a topic or the main chat.
+  const headerTitle = isTopic ? topicName || 'Тема' : chatName;
+  const headerSubtitle = isTopic
+    ? chatName
+    : isGroup
+      ? `${chat.participants.length} участник(ов)`
+      : isOnline ? 'в сети' : `был(а) ${otherUser?.lastSeen || 'давно'}`;
 
   const handleSend = () => {
     if (!input.trim()) return;
     const newMsg: Message = {
       id: `new-${Date.now()}`,
-      chatId,
+      chatId: topicId || chatId,
       senderId: 'me',
       text: input.trim(),
       timestamp: new Date().toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' }),
       read: false,
     };
-    setLocalMessages(prev => [...prev, newMsg]);
+
+    if (isTopic && onTopicMessageSent) {
+      onTopicMessageSent(newMsg);
+    } else {
+      setLocalMessages(prev => [...prev, newMsg]);
+    }
     setInput('');
   };
 
   const handleHeaderClick = () => {
-    if (isGroup && onOpenGroupInfo) onOpenGroupInfo();
+    if (!isTopic && isGroup && onOpenGroupInfo) onOpenGroupInfo();
   };
 
   return (
@@ -60,12 +101,15 @@ export function ChatWindow({ chatId, onBack, onOpenGroupInfo, extraChats = [] }:
           </button>
         )}
 
-        {/* Clickable header area for group info */}
         <div
-          className={cn('flex items-center gap-3 flex-1 min-w-0', isGroup && 'cursor-pointer')}
+          className={cn('flex items-center gap-3 flex-1 min-w-0', !isTopic && isGroup && 'cursor-pointer')}
           onClick={handleHeaderClick}
         >
-          {isGroup ? (
+          {isTopic ? (
+            <div className="w-10 h-10 rounded-xl bg-muted flex items-center justify-center flex-shrink-0 text-lg">
+              {topicIcon || <Hash className="w-5 h-5 text-muted-foreground" />}
+            </div>
+          ) : isGroup ? (
             <div className="relative flex-shrink-0">
               <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
                 <Users className="w-5 h-5 text-primary" />
@@ -75,15 +119,15 @@ export function ChatWindow({ chatId, onBack, onOpenGroupInfo, extraChats = [] }:
             <Avatar name={chatName} size="md" online={isOnline} />
           )}
           <div className="flex-1 min-w-0">
-            <h3 className="font-semibold text-sm text-foreground truncate">{chatName}</h3>
-            <p className={cn('text-xs', !isGroup && isOnline ? 'text-online' : 'text-muted-foreground')}>
-              {statusText}
+            <h3 className="font-semibold text-sm text-foreground truncate">{headerTitle}</h3>
+            <p className={cn('text-xs', !isTopic && !isGroup && isOnline ? 'text-online' : 'text-muted-foreground')}>
+              {headerSubtitle}
             </p>
           </div>
         </div>
 
         <div className="flex items-center gap-1">
-          {!isGroup && (
+          {!isGroup && !isTopic && (
             <button className="p-2 hover:bg-muted rounded-lg transition-colors">
               <Phone className="w-4 h-4 text-muted-foreground" />
             </button>
@@ -96,17 +140,27 @@ export function ChatWindow({ chatId, onBack, onOpenGroupInfo, extraChats = [] }:
 
       {/* Messages */}
       <div ref={scrollRef} className="flex-1 overflow-y-auto px-4 py-4 space-y-2">
-        {localMessages.length === 0 && (
+        {displayMessages.length === 0 && (
           <div className="flex flex-col items-center justify-center h-full text-muted-foreground">
-            <Users className="w-8 h-8 mb-2 opacity-50" />
-            <p className="text-sm">Нет сообщений</p>
+            {isTopic ? (
+              <>
+                <Hash className="w-8 h-8 mb-2 opacity-50" />
+                <p className="text-sm">Нет сообщений в теме</p>
+              </>
+            ) : (
+              <>
+                <Users className="w-8 h-8 mb-2 opacity-50" />
+                <p className="text-sm">Нет сообщений</p>
+              </>
+            )}
             <p className="text-xs mt-1">Напишите первое сообщение!</p>
           </div>
         )}
-        {localMessages.map((msg, i) => {
+        {displayMessages.map((msg, i) => {
           const isOwn = msg.senderId === 'me';
           const sender = users.find(u => u.id === msg.senderId);
-          const showAvatar = !isOwn && isGroup && (i === 0 || localMessages[i - 1].senderId !== msg.senderId);
+          const showGroupAvatar = isGroup || isTopic;
+          const showAvatar = !isOwn && showGroupAvatar && (i === 0 || displayMessages[i - 1].senderId !== msg.senderId);
           return (
             <motion.div
               key={msg.id}
@@ -115,13 +169,13 @@ export function ChatWindow({ chatId, onBack, onOpenGroupInfo, extraChats = [] }:
               transition={{ duration: 0.15 }}
               className={cn('flex', isOwn ? 'justify-end' : 'justify-start')}
             >
-              {!isOwn && isGroup && (
+              {!isOwn && showGroupAvatar && (
                 <div className="w-8 mr-2 flex-shrink-0">
                   {showAvatar && sender && <Avatar name={sender.name} size="sm" />}
                 </div>
               )}
               <div className={cn('max-w-[75%] px-3.5 py-2 text-sm', isOwn ? 'chat-bubble-own' : 'chat-bubble-other')}>
-                {!isOwn && isGroup && showAvatar && sender && (
+                {!isOwn && showGroupAvatar && showAvatar && sender && (
                   <p className="text-xs font-medium text-primary mb-0.5">{sender.name}</p>
                 )}
                 <p className="leading-relaxed">{msg.text}</p>
@@ -143,7 +197,7 @@ export function ChatWindow({ chatId, onBack, onOpenGroupInfo, extraChats = [] }:
           <div className="flex-1 relative">
             <input
               type="text"
-              placeholder="Сообщение..."
+              placeholder={isTopic ? `Сообщение в "${topicName}"...` : 'Сообщение...'}
               value={input}
               onChange={e => setInput(e.target.value)}
               onKeyDown={e => e.key === 'Enter' && handleSend()}

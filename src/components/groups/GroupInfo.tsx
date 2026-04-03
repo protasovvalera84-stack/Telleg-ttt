@@ -1,4 +1,4 @@
-import { ArrowLeft, Users, LogOut, Info, Calendar, UserPlus } from 'lucide-react';
+import { ArrowLeft, Users, LogOut, Info, Calendar, UserPlus, Hash, ChevronRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Avatar } from '@/components/messenger/Avatar';
 import { users, type Chat } from '@/data/mockData';
@@ -6,11 +6,13 @@ import { motion } from 'framer-motion';
 
 interface GroupInfoProps {
   chat: Chat;
+  topicCount: number;
   onBack: () => void;
   onLeave: (chatId: string) => void;
+  onOpenTopics: () => void;
 }
 
-export function GroupInfo({ chat, onBack, onLeave }: GroupInfoProps) {
+export function GroupInfo({ chat, topicCount, onBack, onLeave, onOpenTopics }: GroupInfoProps) {
   const memberUsers = chat.participants
     .map(id => users.find(u => u.id === id))
     .filter(Boolean) as typeof users;
@@ -59,6 +61,25 @@ export function GroupInfo({ chat, onBack, onLeave }: GroupInfoProps) {
             <p className="text-sm text-foreground leading-relaxed">{chat.description}</p>
           </div>
         )}
+
+        {/* Topics button */}
+        <div className="mx-4 mb-4">
+          <button
+            onClick={onOpenTopics}
+            className="w-full flex items-center gap-3 bg-muted rounded-xl p-4 hover:bg-muted/80 transition-colors"
+          >
+            <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
+              <Hash className="w-5 h-5 text-primary" />
+            </div>
+            <div className="flex-1 text-left">
+              <p className="text-sm font-medium text-foreground">Темы</p>
+              <p className="text-xs text-muted-foreground">
+                {topicCount > 0 ? `${topicCount} тем(ы)` : 'Нет тем'}
+              </p>
+            </div>
+            <ChevronRight className="w-4 h-4 text-muted-foreground" />
+          </button>
+        </div>
 
         {/* Meta info */}
         {(chat.createdAt || creator) && (

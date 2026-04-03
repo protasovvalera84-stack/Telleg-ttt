@@ -27,6 +27,19 @@ export interface Chat {
   createdBy?: string;
 }
 
+/* ── Topics (group threads) ── */
+
+export interface Topic {
+  id: string;
+  groupId: string;
+  name: string;
+  icon: string;
+  createdBy: string;
+  createdAt: string;
+  lastMessage?: { text: string; timestamp: string; senderId: string };
+  messageCount: number;
+}
+
 /* ── Channels ── */
 
 export type MediaType = 'image' | 'video' | 'audio';
@@ -138,5 +151,43 @@ export const defaultChannelPosts: Record<string, ChannelPost[]> = {
     { id: 'cp6', channelId: 'ch3', text: 'Закат на Санторини, Греция', timestamp: '16:00', views: 8900, media: [{ type: 'image', url: 'https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?w=600&h=400&fit=crop', name: 'santorini.jpg' }] },
     { id: 'cp7', channelId: 'ch3', text: 'Северное сияние в Норвегии. Видео снято прошлой ночью.', timestamp: '13:00', views: 12300, media: [{ type: 'video', url: 'https://www.w3schools.com/html/mov_bbb.mp4', name: 'aurora.mp4' }, { type: 'image', url: 'https://images.unsplash.com/photo-1483347756197-71ef80e95f73?w=600&h=400&fit=crop', name: 'norway.jpg' }] },
     { id: 'cp8', channelId: 'ch3', text: 'Утро в горах Швейцарии', timestamp: '08:30', views: 6700, media: [{ type: 'image', url: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&h=400&fit=crop', name: 'switzerland.jpg' }] },
+  ],
+};
+
+/* ── Topics mock data ── */
+
+export const defaultTopics: Topic[] = [
+  { id: 'topic-general-chat3', groupId: 'chat3', name: 'Общее', icon: '💬', createdBy: 'me', createdAt: '01.03.2025', lastMessage: { text: 'Встреча в 15:00', timestamp: '12:00', senderId: 'user3' }, messageCount: 4 },
+  { id: 'topic-tasks-chat3', groupId: 'chat3', name: 'Задачи', icon: '📋', createdBy: 'me', createdAt: '02.03.2025', lastMessage: { text: 'Нужно закончить отчёт к пятнице', timestamp: '11:00', senderId: 'user1' }, messageCount: 3 },
+  { id: 'topic-ideas-chat3', groupId: 'chat3', name: 'Идеи', icon: '💡', createdBy: 'user1', createdAt: '05.03.2025', lastMessage: { text: 'Предлагаю новый дизайн', timestamp: '10:30', senderId: 'user5' }, messageCount: 2 },
+  { id: 'topic-general-chat5', groupId: 'chat5', name: 'Общее', icon: '💬', createdBy: 'user2', createdAt: '15.01.2025', lastMessage: { text: 'Кто идёт на выходных?', timestamp: '10:45', senderId: 'user6' }, messageCount: 4 },
+  { id: 'topic-events-chat5', groupId: 'chat5', name: 'Мероприятия', icon: '🎉', createdBy: 'user4', createdAt: '20.01.2025', lastMessage: { text: 'Концерт в субботу!', timestamp: '09:00', senderId: 'user4' }, messageCount: 2 },
+];
+
+export const defaultTopicMessages: Record<string, Message[]> = {
+  'topic-general-chat3': [
+    { id: 'tm1', chatId: 'topic-general-chat3', senderId: 'user1', text: 'Всем привет!', timestamp: '11:30', read: true },
+    { id: 'tm2', chatId: 'topic-general-chat3', senderId: 'user5', text: 'Привет!', timestamp: '11:35', read: true },
+    { id: 'tm3', chatId: 'topic-general-chat3', senderId: 'me', text: 'Здравствуйте!', timestamp: '11:40', read: true },
+    { id: 'tm4', chatId: 'topic-general-chat3', senderId: 'user3', text: 'Встреча в 15:00', timestamp: '12:00', read: false },
+  ],
+  'topic-tasks-chat3': [
+    { id: 'tm5', chatId: 'topic-tasks-chat3', senderId: 'me', text: 'Список задач на неделю обновлён', timestamp: '09:00', read: true },
+    { id: 'tm6', chatId: 'topic-tasks-chat3', senderId: 'user3', text: 'Взял задачу по API', timestamp: '09:30', read: true },
+    { id: 'tm7', chatId: 'topic-tasks-chat3', senderId: 'user1', text: 'Нужно закончить отчёт к пятнице', timestamp: '11:00', read: false },
+  ],
+  'topic-ideas-chat3': [
+    { id: 'tm8', chatId: 'topic-ideas-chat3', senderId: 'user1', text: 'Что если добавить тёмную тему?', timestamp: '10:00', read: true },
+    { id: 'tm9', chatId: 'topic-ideas-chat3', senderId: 'user5', text: 'Предлагаю новый дизайн', timestamp: '10:30', read: false },
+  ],
+  'topic-general-chat5': [
+    { id: 'tm10', chatId: 'topic-general-chat5', senderId: 'user2', text: 'Планы на выходные?', timestamp: '10:00', read: true },
+    { id: 'tm11', chatId: 'topic-general-chat5', senderId: 'user4', text: 'Можно в парк сходить', timestamp: '10:20', read: true },
+    { id: 'tm12', chatId: 'topic-general-chat5', senderId: 'me', text: 'Я за!', timestamp: '10:30', read: true },
+    { id: 'tm13', chatId: 'topic-general-chat5', senderId: 'user6', text: 'Кто идёт на выходных?', timestamp: '10:45', read: false },
+  ],
+  'topic-events-chat5': [
+    { id: 'tm14', chatId: 'topic-events-chat5', senderId: 'user2', text: 'Нашла классный фестиваль', timestamp: '08:00', read: true },
+    { id: 'tm15', chatId: 'topic-events-chat5', senderId: 'user4', text: 'Концерт в субботу!', timestamp: '09:00', read: false },
   ],
 };
