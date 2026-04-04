@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
+import { type PrivacySettings, DEFAULT_PRIVACY } from '@/components/settings/PrivacySettings';
 
 /** Simulated SMS verification code. In production, this would come from a backend. */
 const MOCK_SMS_CODE = '1234';
@@ -26,6 +27,8 @@ interface AuthContextValue {
   loading: boolean;
   /** Last error message, if any. */
   error: string | null;
+  /** Privacy settings for the current user. */
+  privacy: PrivacySettings;
 
   /** Step 1: Submit phone number. Simulates sending an SMS code. */
   submitPhone: (phone: string) => Promise<void>;
@@ -39,11 +42,14 @@ interface AuthContextValue {
   resendCode: () => Promise<void>;
   /** Go back to the previous auth step. */
   goBack: () => void;
+  /** Update privacy settings. */
+  updatePrivacy: (privacy: PrivacySettings) => void;
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 
 const STORAGE_KEY = 'telleg_auth_user';
+const PRIVACY_STORAGE_KEY = 'telleg_privacy';
 
 function loadUser(): AuthUser | null {
   try {
@@ -63,23 +69,41 @@ function clearUser() {
   localStorage.removeItem(STORAGE_KEY);
 }
 
+function loadPrivacy(): PrivacySettings {
+  try {
+    const raw = localStorage.getItem(PRIVACY_STORAGE_KEY);
+    if (raw) return { ...DEFAULT_PRIVACY, ...JSON.parse(raw) };
+  } catch {
+    // corrupted data — ignore
+  }
+  return DEFAULT_PRIVACY;
+}
+
+function savePrivacy(privacy: PrivacySettings) {
+  localStorage.setItem(PRIVACY_STORAGE_KEY, JSON.stringify(privacy));
+}
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(() => loadUser());
   const [step, setStep] = useState<AuthStep>(() => (loadUser() ? 'done' : 'phone'));
   const [phone, setPhone] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [privacy, setPrivacy] = useState<PrivacySettings>(() => loadPrivacy());
 
   // Keep localStorage in sync.
   useEffect(() => {
     if (user) saveUser(user);
   }, [user]);
 
+  useEffect(() => {
+    savePrivacy(privacy);
+  }, [privacy]);
+
   const submitPhone = async (phoneNumber: string) => {
     setError(null);
     setLoading(true);
 
-    // Basic validation: digits only, 10-15 chars after stripping non-digits.
     const digits = phoneNumber.replace(/\D/g, '');
     if (digits.length < 10 || digits.length > 15) {
       setError('Введите корректный номер телефона');
@@ -87,7 +111,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return;
     }
 
-    // Simulate network delay for sending SMS.
     await new Promise((r) => setTimeout(r, SMS_SEND_DELAY));
 
     setPhone(phoneNumber);
@@ -99,7 +122,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setError(null);
     setLoading(true);
 
-    // Simulate verification delay.
     await new Promise((r) => setTimeout(r, 600));
 
     if (code !== MOCK_SMS_CODE) {
@@ -108,7 +130,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return false;
     }
 
-    // Check if user already exists (returning user).
     const existing = loadUser();
     if (existing && existing.phone === phone) {
       setUser(existing);
@@ -140,6 +161,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setStep('phone');
     setError(null);
     clearUser();
+    localStorage.removeItem(PRIVACY_STORAGE_KEY);
+    setPrivacy(DEFAULT_PRIVACY);
   };
 
   const resendCode = async () => {
@@ -159,9 +182,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  const updatePrivacy = (newPrivacy: PrivacySettings) => {
+    setPrivacy(newPrivacy);
+  };
+
   return (
     <AuthContext.Provider
-      value={{ user, step, phone, loading, error, submitPhone, verifyCode, setProfileName, logout, resendCode, goBack }}
+      value={{ user, step, phone, loading, error, privacy, submitPhone, verifyCode, setProfileName, logout, resendCode, goBack, updatePrivacy }}
     >
       {children}
     </AuthContext.Provider>
