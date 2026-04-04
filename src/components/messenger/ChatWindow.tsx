@@ -2,10 +2,11 @@ import { useState, useRef, useEffect, useMemo } from 'react';
 import { Send, Paperclip, Smile, Phone, MoreVertical, ArrowLeft, Users, Hash } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Avatar } from './Avatar';
+import { EmojiPicker } from './EmojiPicker';
 import { messages, users, chats as defaultChats, type Message, type Chat } from '@/data/mockData';
 import { useAuth } from '@/contexts/AuthContext';
 import { getFontSizeClass, getBubbleClasses, getBackgroundClass } from '@/components/settings/AppearanceSettings';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface ChatWindowProps {
   chatId: string;
@@ -43,6 +44,7 @@ export function ChatWindow({
   // For topics, use the externally-provided topicMessages.
   const [localMessages, setLocalMessages] = useState<Message[]>(messages[chatId] || []);
   const [input, setInput] = useState('');
+  const [showEmoji, setShowEmoji] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   const isTopic = !!topicId;
@@ -91,6 +93,11 @@ export function ChatWindow({
       setLocalMessages(prev => [...prev, newMsg]);
     }
     setInput('');
+    setShowEmoji(false);
+  };
+
+  const handleEmojiSelect = (emoji: string) => {
+    setInput(prev => prev + emoji);
   };
 
   const handleHeaderClick = () => {
@@ -210,9 +217,22 @@ export function ChatWindow({
               className="w-full bg-muted rounded-xl px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring"
             />
           </div>
-          <button className="p-2 hover:bg-muted rounded-lg transition-colors">
-            <Smile className="w-5 h-5 text-muted-foreground" />
-          </button>
+          <div className="relative">
+            <button
+              onClick={() => setShowEmoji(!showEmoji)}
+              className={cn('p-2 rounded-lg transition-colors', showEmoji ? 'bg-primary/10 text-primary' : 'hover:bg-muted text-muted-foreground')}
+            >
+              <Smile className="w-5 h-5" />
+            </button>
+            <AnimatePresence>
+              {showEmoji && (
+                <EmojiPicker
+                  onSelect={handleEmojiSelect}
+                  onClose={() => setShowEmoji(false)}
+                />
+              )}
+            </AnimatePresence>
+          </div>
           <button
             onClick={handleSend}
             disabled={!input.trim()}
