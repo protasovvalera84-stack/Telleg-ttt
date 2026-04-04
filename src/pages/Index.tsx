@@ -431,7 +431,7 @@ const Index = () => {
           <GroupInfo
             chat={activeChat}
             topicCount={groupTopics.length}
-            onBack={() => setView('chat')}
+            onBack={() => setView('topics')}
             onLeave={handleLeaveGroup}
             onOpenTopics={() => setView('topics')}
             onOpenPrivacy={activeChat.createdBy === 'me' ? () => setView('group-privacy') : undefined}
