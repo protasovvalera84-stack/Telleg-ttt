@@ -1,4 +1,4 @@
-import { ArrowLeft, Plus, Hash, MessageSquare, Info } from 'lucide-react';
+import { ArrowLeft, Plus, Hash, MessageSquare, Info, Pencil } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { users, type Topic } from '@/data/mockData';
 import { motion } from 'framer-motion';
@@ -9,6 +9,7 @@ interface TopicListProps {
   activeTopicId: string | null;
   onSelectTopic: (topicId: string) => void;
   onCreateTopic: () => void;
+  onEditTopic: (topicId: string) => void;
   onBack: () => void;
   onOpenGroupInfo: () => void;
 }
@@ -19,6 +20,7 @@ export function TopicList({
   activeTopicId,
   onSelectTopic,
   onCreateTopic,
+  onEditTopic,
   onBack,
   onOpenGroupInfo,
 }: TopicListProps) {
@@ -71,69 +73,91 @@ export function TopicList({
             : '';
 
           return (
-            <motion.button
+            <motion.div
               key={topic.id}
               initial={{ opacity: 0, x: -8 }}
               animate={{ opacity: 1, x: 0 }}
-              onClick={() => onSelectTopic(topic.id)}
               className={cn(
-                'w-full flex items-center gap-3 px-3 py-3 transition-colors text-left',
+                'group/topic flex items-center gap-3 px-3 py-3 transition-colors',
                 isActive ? 'bg-chat-active' : 'hover:bg-chat-hover',
               )}
             >
-              {/* Topic icon */}
-              <div
-                className={cn(
-                  'w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 text-lg',
-                  isActive ? 'bg-primary-foreground/20' : 'bg-muted',
-                )}
+              {/* Clickable area — opens the topic */}
+              <button
+                onClick={() => onSelectTopic(topic.id)}
+                className="flex items-center gap-3 flex-1 min-w-0 text-left"
               >
-                {topic.icon || <Hash className="w-5 h-5" />}
-              </div>
-
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center justify-between">
-                  <span
-                    className={cn(
-                      'font-medium text-sm truncate',
-                      isActive ? 'text-chat-active-foreground' : 'text-foreground',
-                    )}
-                  >
-                    {topic.name}
-                  </span>
-                  <span
-                    className={cn(
-                      'text-xs flex-shrink-0 ml-2',
-                      isActive ? 'text-chat-active-foreground/70' : 'text-muted-foreground',
-                    )}
-                  >
-                    {lastMsg?.timestamp}
-                  </span>
+                {/* Topic icon */}
+                <div
+                  className={cn(
+                    'w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 text-lg',
+                    isActive ? 'bg-primary-foreground/20' : 'bg-muted',
+                  )}
+                >
+                  {topic.icon || <Hash className="w-5 h-5" />}
                 </div>
-                <div className="flex items-center justify-between mt-0.5">
-                  <p
-                    className={cn(
-                      'text-xs truncate',
-                      isActive ? 'text-chat-active-foreground/70' : 'text-muted-foreground',
-                    )}
-                  >
-                    {senderName && <span className="text-primary">{senderName}: </span>}
-                    {lastMsg?.text || 'Нет сообщений'}
-                  </p>
-                  {topic.messageCount > 0 && (
+
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center justify-between">
                     <span
                       className={cn(
-                        'ml-2 flex-shrink-0 flex items-center gap-0.5 text-[10px]',
-                        isActive ? 'text-chat-active-foreground/60' : 'text-muted-foreground',
+                        'font-medium text-sm truncate',
+                        isActive ? 'text-chat-active-foreground' : 'text-foreground',
                       )}
                     >
-                      <MessageSquare className="w-3 h-3" />
-                      {topic.messageCount}
+                      {topic.name}
                     </span>
-                  )}
+                    <span
+                      className={cn(
+                        'text-xs flex-shrink-0 ml-2',
+                        isActive ? 'text-chat-active-foreground/70' : 'text-muted-foreground',
+                      )}
+                    >
+                      {lastMsg?.timestamp}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between mt-0.5">
+                    <p
+                      className={cn(
+                        'text-xs truncate',
+                        isActive ? 'text-chat-active-foreground/70' : 'text-muted-foreground',
+                      )}
+                    >
+                      {senderName && <span className="text-primary">{senderName}: </span>}
+                      {lastMsg?.text || 'Нет сообщений'}
+                    </p>
+                    {topic.messageCount > 0 && (
+                      <span
+                        className={cn(
+                          'ml-2 flex-shrink-0 flex items-center gap-0.5 text-[10px]',
+                          isActive ? 'text-chat-active-foreground/60' : 'text-muted-foreground',
+                        )}
+                      >
+                        <MessageSquare className="w-3 h-3" />
+                        {topic.messageCount}
+                      </span>
+                    )}
+                  </div>
                 </div>
-              </div>
-            </motion.button>
+              </button>
+
+              {/* Edit button — visible on hover (desktop) or always on active */}
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onEditTopic(topic.id);
+                }}
+                className={cn(
+                  'p-1.5 rounded-lg transition-all flex-shrink-0',
+                  isActive
+                    ? 'text-chat-active-foreground/60 hover:text-chat-active-foreground hover:bg-primary-foreground/10'
+                    : 'text-muted-foreground/0 group-hover/topic:text-muted-foreground hover:bg-muted',
+                )}
+                title="Редактировать тему"
+              >
+                <Pencil className="w-3.5 h-3.5" />
+              </button>
+            </motion.div>
           );
         })}
 

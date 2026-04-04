@@ -8,6 +8,7 @@ import { CreateGroup } from '@/components/groups/CreateGroup';
 import { GroupInfo } from '@/components/groups/GroupInfo';
 import { TopicList } from '@/components/groups/TopicList';
 import { CreateTopic } from '@/components/groups/CreateTopic';
+import { EditTopic } from '@/components/groups/EditTopic';
 import { ChannelFeed } from '@/components/channels/ChannelFeed';
 import { CreateChannel } from '@/components/channels/CreateChannel';
 import { ChannelInfo } from '@/components/channels/ChannelInfo';
@@ -35,6 +36,7 @@ type View =
   | 'group-info'
   | 'topics'
   | 'create-topic'
+  | 'edit-topic'
   | 'create-channel'
   | 'channel-info'
   | 'create-post';
@@ -43,6 +45,7 @@ const Index = () => {
   const [activeChatId, setActiveChatId] = useState<string | null>(null);
   const [activeChannelId, setActiveChannelId] = useState<string | null>(null);
   const [activeTopicId, setActiveTopicId] = useState<string | null>(null);
+  const [editingTopicId, setEditingTopicId] = useState<string | null>(null);
   const [view, setView] = useState<View>('chat');
   const [createdGroups, setCreatedGroups] = useState<Chat[]>([]);
   const [channels, setChannels] = useState<Channel[]>(defaultChannels);
@@ -51,7 +54,7 @@ const Index = () => {
   const [topicMessages, setTopicMessages] = useState<Record<string, Message[]>>(defaultTopicMessages);
   const isMobile = useIsMobile();
 
-  // On mobile: show sidebar when nothing is actively open, OR when viewing topic list (group selected but no topic).
+  // On mobile: show sidebar when nothing is actively open, OR when viewing topic list.
   const isInTopicList = view === 'topics' && activeChatId && !activeTopicId;
   const showSidebar = !isMobile || ((!activeChatId && !activeChannelId) || !!isInTopicList);
   const showContent = !isMobile || ((!!activeChatId || !!activeChannelId) && !isInTopicList);
@@ -60,6 +63,7 @@ const Index = () => {
   const activeChat = activeChatId ? allChats.find(c => c.id === activeChatId) : null;
   const activeChannel = activeChannelId ? channels.find(c => c.id === activeChannelId) : null;
   const activeTopic = activeTopicId ? topics.find(t => t.id === activeTopicId) : null;
+  const editingTopic = editingTopicId ? topics.find(t => t.id === editingTopicId) : null;
   const groupTopics = activeChatId ? topics.filter(t => t.groupId === activeChatId) : [];
 
   /* ── Chat / Group handlers ── */
@@ -67,7 +71,6 @@ const Index = () => {
     setActiveChatId(chatId);
     setActiveChannelId(null);
     setActiveTopicId(null);
-    // If it's a group, show topics view.
     const chat = [...defaultChats, ...createdGroups].find(c => c.id === chatId);
     if (chat?.type === 'group') {
       setView('topics');
@@ -76,7 +79,6 @@ const Index = () => {
 
   const handleGroupCreated = (newChat: Chat) => {
     setCreatedGroups(prev => [...prev, newChat]);
-    // Create a default "Общее" topic for the new group.
     const generalTopic: Topic = {
       id: `topic-general-${newChat.id}`,
       groupId: newChat.id,
@@ -116,13 +118,35 @@ const Index = () => {
     setView('chat');
   };
 
+  const handleEditTopic = (topicId: string) => {
+    setEditingTopicId(topicId);
+    setView('edit-topic');
+  };
+
+  const handleTopicSaved = (updated: Topic) => {
+    setTopics(prev => prev.map(t => (t.id === updated.id ? updated : t)));
+    setEditingTopicId(null);
+    setView('topics');
+  };
+
+  const handleTopicDeleted = (topicId: string) => {
+    setTopics(prev => prev.filter(t => t.id !== topicId));
+    setTopicMessages(prev => {
+      const next = { ...prev };
+      delete next[topicId];
+      return next;
+    });
+    if (activeTopicId === topicId) setActiveTopicId(null);
+    setEditingTopicId(null);
+    setView('topics');
+  };
+
   const handleTopicMessageSent = (msg: Message) => {
     if (!activeTopicId) return;
     setTopicMessages(prev => ({
       ...prev,
       [activeTopicId]: [...(prev[activeTopicId] || []), msg],
     }));
-    // Update topic's lastMessage and messageCount.
     setTopics(prev =>
       prev.map(t =>
         t.id === activeTopicId
@@ -176,7 +200,6 @@ const Index = () => {
 
   const handleBack = () => {
     if (activeTopicId) {
-      // Go back from topic to topic list.
       setActiveTopicId(null);
       setView('topics');
       return;
@@ -187,7 +210,6 @@ const Index = () => {
 
   /* ── Render ── */
   const renderSidebar = () => {
-    // If viewing topics for a group, show TopicList instead of ChatList.
     if (view === 'topics' && activeChatId && activeChat?.type === 'group') {
       return (
         <TopicList
@@ -196,6 +218,7 @@ const Index = () => {
           activeTopicId={activeTopicId}
           onSelectTopic={handleSelectTopic}
           onCreateTopic={() => setView('create-topic')}
+          onEditTopic={handleEditTopic}
           onBack={() => {
             setActiveChatId(null);
             setActiveTopicId(null);
@@ -223,7 +246,6 @@ const Index = () => {
   };
 
   const renderContent = () => {
-    // Channel feed
     if (activeChannelId && activeChannel) {
       return (
         <ChannelFeed
@@ -236,7 +258,6 @@ const Index = () => {
       );
     }
 
-    // Topic thread
     if (activeChatId && activeTopicId && activeTopic) {
       return (
         <ChatWindow
@@ -252,12 +273,10 @@ const Index = () => {
       );
     }
 
-    // Group selected but no topic -- show empty state prompting to pick a topic.
     if (activeChatId && activeChat?.type === 'group' && !activeTopicId) {
       return <EmptyChat />;
     }
 
-    // Regular chat
     if (activeChatId) {
       return (
         <ChatWindow
@@ -304,6 +323,14 @@ const Index = () => {
             groupId={activeChatId}
             onBack={() => setView('topics')}
             onCreated={handleTopicCreated}
+          />
+        )}
+        {view === 'edit-topic' && editingTopic && (
+          <EditTopic
+            topic={editingTopic}
+            onBack={() => { setEditingTopicId(null); setView('topics'); }}
+            onSave={handleTopicSaved}
+            onDelete={handleTopicDeleted}
           />
         )}
         {view === 'create-channel' && (
