@@ -9,6 +9,7 @@ import { GroupInfo } from '@/components/groups/GroupInfo';
 import { TopicList } from '@/components/groups/TopicList';
 import { CreateTopic } from '@/components/groups/CreateTopic';
 import { EditTopic } from '@/components/groups/EditTopic';
+import { GroupPrivacyPage } from '@/components/groups/GroupPrivacyPage';
 import { ChannelFeed } from '@/components/channels/ChannelFeed';
 import { CreateChannel } from '@/components/channels/CreateChannel';
 import { ChannelInfo } from '@/components/channels/ChannelInfo';
@@ -27,6 +28,7 @@ import {
   type Channel,
   type ChannelPost,
   type ChannelPrivacy,
+  type GroupPrivacy,
   type Topic,
   type Message,
 } from '@/data/mockData';
@@ -39,6 +41,7 @@ type View =
   | 'admin'
   | 'create-group'
   | 'group-info'
+  | 'group-privacy'
   | 'topics'
   | 'create-topic'
   | 'edit-topic'
@@ -211,6 +214,13 @@ const Index = () => {
     );
   };
 
+  const handleGroupPrivacyChange = (chatId: string, newPrivacy: GroupPrivacy) => {
+    // Update in createdGroups (user-created groups).
+    setCreatedGroups(prev =>
+      prev.map(c => (c.id === chatId ? { ...c, groupPrivacy: newPrivacy } : c)),
+    );
+  };
+
   const handleBack = () => {
     if (activeTopicId) {
       setActiveTopicId(null);
@@ -336,6 +346,15 @@ const Index = () => {
             onBack={() => setView('chat')}
             onLeave={handleLeaveGroup}
             onOpenTopics={() => setView('topics')}
+            onOpenPrivacy={activeChat.createdBy === 'me' ? () => setView('group-privacy') : undefined}
+          />
+        )}
+        {view === 'group-privacy' && activeChatId && activeChat?.type === 'group' && activeChat.groupPrivacy && (
+          <GroupPrivacyPage
+            groupName={activeChat.name || 'Группа'}
+            privacy={activeChat.groupPrivacy}
+            onBack={() => setView('group-info')}
+            onChange={(p) => handleGroupPrivacyChange(activeChatId, p)}
           />
         )}
         {view === 'create-topic' && activeChatId && (

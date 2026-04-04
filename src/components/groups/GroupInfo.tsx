@@ -1,4 +1,4 @@
-import { ArrowLeft, Users, LogOut, Info, Calendar, UserPlus, Hash, ChevronRight } from 'lucide-react';
+import { ArrowLeft, Users, LogOut, Info, Calendar, UserPlus, Hash, ChevronRight, Shield, Globe, Lock } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Avatar } from '@/components/messenger/Avatar';
 import { users, type Chat } from '@/data/mockData';
@@ -10,15 +10,19 @@ interface GroupInfoProps {
   onBack: () => void;
   onLeave: (chatId: string) => void;
   onOpenTopics: () => void;
+  onOpenPrivacy?: () => void;
 }
 
-export function GroupInfo({ chat, topicCount, onBack, onLeave, onOpenTopics }: GroupInfoProps) {
+export function GroupInfo({ chat, topicCount, onBack, onLeave, onOpenTopics, onOpenPrivacy }: GroupInfoProps) {
   const memberUsers = chat.participants
     .map(id => users.find(u => u.id === id))
     .filter(Boolean) as typeof users;
 
   const onlineCount = memberUsers.filter(u => u.online).length;
   const creator = chat.createdBy ? users.find(u => u.id === chat.createdBy) : null;
+  const isCreator = chat.createdBy === 'me';
+  const gp = chat.groupPrivacy;
+  const VisIcon = gp?.visibility === 'private' ? Lock : Globe;
 
   return (
     <motion.div
@@ -81,6 +85,28 @@ export function GroupInfo({ chat, topicCount, onBack, onLeave, onOpenTopics }: G
           </button>
         </div>
 
+        {/* Privacy settings button (creator only) */}
+        {isCreator && onOpenPrivacy && (
+          <div className="mx-4 mb-4">
+            <button
+              onClick={onOpenPrivacy}
+              className="w-full flex items-center gap-3 bg-muted rounded-xl p-4 hover:bg-muted/80 transition-colors"
+            >
+              <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
+                <Shield className="w-5 h-5 text-primary" />
+              </div>
+              <div className="flex-1 text-left">
+                <p className="text-sm font-medium text-foreground">Приватность группы</p>
+                <p className="text-xs text-muted-foreground">
+                  {gp?.visibility === 'private' ? 'Приватная' : 'Публичная'}
+                  {gp?.slowMode ? `, медленный режим` : ''}
+                </p>
+              </div>
+              <ChevronRight className="w-4 h-4 text-muted-foreground" />
+            </button>
+          </div>
+        )}
+
         {/* Meta info */}
         {(chat.createdAt || creator) && (
           <div className="mx-4 mb-4 bg-muted rounded-xl p-4 space-y-2">
@@ -88,6 +114,14 @@ export function GroupInfo({ chat, topicCount, onBack, onLeave, onOpenTopics }: G
               <div className="flex items-center gap-2">
                 <Calendar className="w-4 h-4 text-muted-foreground" />
                 <span className="text-sm text-foreground">Создана {chat.createdAt}</span>
+              </div>
+            )}
+            {gp && (
+              <div className="flex items-center gap-2">
+                <VisIcon className="w-4 h-4 text-muted-foreground" />
+                <span className="text-sm text-foreground">
+                  {gp.visibility === 'private' ? 'Приватная группа' : 'Публичная группа'}
+                </span>
               </div>
             )}
             {creator && (

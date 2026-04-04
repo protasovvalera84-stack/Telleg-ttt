@@ -2,7 +2,7 @@ import { useState, type FormEvent } from 'react';
 import { ArrowLeft, ArrowRight, Check, Users, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Avatar } from '@/components/messenger/Avatar';
-import { users, type Chat } from '@/data/mockData';
+import { users, type Chat, DEFAULT_GROUP_PRIVACY } from '@/data/mockData';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface CreateGroupProps {
@@ -43,6 +43,7 @@ export function CreateGroup({ onBack, onCreated }: CreateGroupProps) {
       unreadCount: 0,
       createdAt: new Date().toLocaleDateString('ru-RU'),
       createdBy: 'me',
+      groupPrivacy: { ...DEFAULT_GROUP_PRIVACY },
     };
 
     onCreated(newChat);

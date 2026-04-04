@@ -15,6 +15,28 @@ export interface Message {
   read: boolean;
 }
 
+/* ── Group privacy ── */
+
+export type GroupVisibility = 'public' | 'private';
+export type GroupPermission = 'everyone' | 'admins' | 'nobody';
+
+export interface GroupPrivacy {
+  visibility: GroupVisibility;
+  sendMessages: GroupPermission;
+  addMembers: GroupPermission;
+  showMembers: 'everyone' | 'members' | 'admins';
+  inviteLink?: string;
+  slowMode: number; // seconds between messages, 0 = off
+}
+
+export const DEFAULT_GROUP_PRIVACY: GroupPrivacy = {
+  visibility: 'public',
+  sendMessages: 'everyone',
+  addMembers: 'everyone',
+  showMembers: 'everyone',
+  slowMode: 0,
+};
+
 export interface Chat {
   id: string;
   type: 'private' | 'group';
@@ -25,6 +47,8 @@ export interface Chat {
   unreadCount: number;
   createdAt?: string;
   createdBy?: string;
+  /** Group privacy settings (only for type === 'group'). */
+  groupPrivacy?: GroupPrivacy;
 }
 
 /* ── Topics (group threads) ── */
@@ -108,9 +132,9 @@ export const users: User[] = [
 export const chats: Chat[] = [
   { id: 'chat1', type: 'private', participants: ['me', 'user1'], lastMessage: { text: 'Привет! Как дела?', timestamp: '14:30', senderId: 'user1' }, unreadCount: 2 },
   { id: 'chat2', type: 'private', participants: ['me', 'user2'], lastMessage: { text: 'Увидимся завтра!', timestamp: '13:15', senderId: 'me' }, unreadCount: 0 },
-  { id: 'chat3', type: 'group', name: 'Рабочий чат', description: 'Обсуждение рабочих вопросов и задач команды', participants: ['me', 'user1', 'user3', 'user5'], lastMessage: { text: 'Встреча в 15:00', timestamp: '12:00', senderId: 'user3' }, unreadCount: 5, createdAt: '01.03.2025', createdBy: 'me' },
+  { id: 'chat3', type: 'group', name: 'Рабочий чат', description: 'Обсуждение рабочих вопросов и задач команды', participants: ['me', 'user1', 'user3', 'user5'], lastMessage: { text: 'Встреча в 15:00', timestamp: '12:00', senderId: 'user3' }, unreadCount: 5, createdAt: '01.03.2025', createdBy: 'me', groupPrivacy: { visibility: 'private', sendMessages: 'everyone', addMembers: 'admins', showMembers: 'members', slowMode: 0, inviteLink: 'https://telleg.app/join/work-abc123' } },
   { id: 'chat4', type: 'private', participants: ['me', 'user4'], lastMessage: { text: 'Спасибо за помощь!', timestamp: '11:30', senderId: 'user4' }, unreadCount: 1 },
-  { id: 'chat5', type: 'group', name: 'Друзья', description: 'Планируем встречи и делимся новостями', participants: ['me', 'user2', 'user4', 'user6'], lastMessage: { text: 'Кто идёт на выходных?', timestamp: '10:45', senderId: 'user6' }, unreadCount: 3, createdAt: '15.01.2025', createdBy: 'user2' },
+  { id: 'chat5', type: 'group', name: 'Друзья', description: 'Планируем встречи и делимся новостями', participants: ['me', 'user2', 'user4', 'user6'], lastMessage: { text: 'Кто идёт на выходных?', timestamp: '10:45', senderId: 'user6' }, unreadCount: 3, createdAt: '15.01.2025', createdBy: 'user2', groupPrivacy: { visibility: 'public', sendMessages: 'everyone', addMembers: 'everyone', showMembers: 'everyone', slowMode: 0 } },
   { id: 'chat6', type: 'private', participants: ['me', 'user5'], lastMessage: { text: 'Отправил документы', timestamp: '09:20', senderId: 'me' }, unreadCount: 0 },
 ];
 
