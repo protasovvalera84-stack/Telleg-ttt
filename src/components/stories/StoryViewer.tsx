@@ -152,7 +152,7 @@ export function StoryViewer({ stories, initialUserId, onClose, onMarkViewed }: S
         </AnimatePresence>
 
         {/* Progress bars */}
-        <div className="absolute top-0 left-0 right-0 flex gap-1 p-2 z-10">
+        <div className="absolute top-0 left-0 right-0 flex gap-1 p-2 z-30">
           {currentStory.items.map((item, i) => (
             <div key={item.id} className="flex-1 h-0.5 bg-white/30 rounded-full overflow-hidden">
               <div
@@ -166,7 +166,7 @@ export function StoryViewer({ stories, initialUserId, onClose, onMarkViewed }: S
         </div>
 
         {/* Header */}
-        <div className="absolute top-4 left-0 right-0 flex items-center gap-3 px-4 z-10">
+        <div className="absolute top-4 left-0 right-0 flex items-center gap-3 px-4 z-30">
           <div className={cn('w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold', getColor(userName))}>
             {getInitials(userName)}
           </div>
@@ -174,8 +174,8 @@ export function StoryViewer({ stories, initialUserId, onClose, onMarkViewed }: S
             <p className="text-white text-sm font-semibold truncate drop-shadow">{userName}</p>
             <p className="text-white/70 text-[10px] drop-shadow">{currentItem.timestamp}</p>
           </div>
-          <button onClick={onClose} className="p-1 text-white/80 hover:text-white transition-colors">
-            <X className="w-6 h-6 drop-shadow" />
+          <button onClick={onClose} className="p-2 text-white/80 hover:text-white bg-black/30 hover:bg-black/50 rounded-full transition-colors">
+            <X className="w-5 h-5 drop-shadow" />
           </button>
         </div>
 
