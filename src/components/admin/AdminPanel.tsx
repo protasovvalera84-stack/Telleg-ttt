@@ -1,4 +1,4 @@
-import { ArrowLeft, Users, MessageCircle, Shield, BarChart3 } from 'lucide-react';
+import { ArrowLeft, UsersRound, Zap, Shield, BarChart3 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { users, chats } from '@/data/mockData';
 
@@ -14,8 +14,8 @@ export function AdminPanel({ onBack }: AdminPanelProps) {
       </div>
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
         <div className="grid grid-cols-2 gap-3">
-          <div className="bg-muted rounded-xl p-4"><div className="flex items-center gap-2 mb-2"><Users className="w-4 h-4 text-admin-accent" /><span className="text-xs text-muted-foreground">Пользователи</span></div><p className="text-2xl font-bold text-foreground">{users.length}</p></div>
-          <div className="bg-muted rounded-xl p-4"><div className="flex items-center gap-2 mb-2"><MessageCircle className="w-4 h-4 text-admin-accent" /><span className="text-xs text-muted-foreground">Чаты</span></div><p className="text-2xl font-bold text-foreground">{chats.length}</p></div>
+          <div className="bg-muted rounded-xl p-4"><div className="flex items-center gap-2 mb-2"><UsersRound className="w-4 h-4 text-admin-accent" /><span className="text-xs text-muted-foreground">Пользователи</span></div><p className="text-2xl font-bold text-foreground">{users.length}</p></div>
+          <div className="bg-muted rounded-xl p-4"><div className="flex items-center gap-2 mb-2"><Zap className="w-4 h-4 text-admin-accent" /><span className="text-xs text-muted-foreground">Чаты</span></div><p className="text-2xl font-bold text-foreground">{chats.length}</p></div>
           <div className="bg-muted rounded-xl p-4"><div className="flex items-center gap-2 mb-2"><Shield className="w-4 h-4 text-admin-accent" /><span className="text-xs text-muted-foreground">Онлайн</span></div><p className="text-2xl font-bold text-foreground">{users.filter(u => u.online).length}</p></div>
           <div className="bg-muted rounded-xl p-4"><div className="flex items-center gap-2 mb-2"><BarChart3 className="w-4 h-4 text-admin-accent" /><span className="text-xs text-muted-foreground">Группы</span></div><p className="text-2xl font-bold text-foreground">{chats.filter(c => c.type === 'group').length}</p></div>
         </div>

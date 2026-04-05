@@ -1,4 +1,4 @@
-import { ArrowLeft, Megaphone, Calendar, UserPlus, LogOut, Bell, BellOff, Shield, ChevronRight, Globe, Lock } from 'lucide-react';
+import { ArrowLeft, Radio, Calendar, UserPlus, LogOut, Bell, BellOff, Shield, ChevronRight, Globe, Lock } from 'lucide-react';
 import { type Channel } from '@/data/mockData';
 import { motion } from 'framer-motion';
 
@@ -34,7 +34,7 @@ export function ChannelInfo({ channel, onBack, onToggleSubscribe, onDelete, onOp
         {/* Channel avatar & name */}
         <div className="flex flex-col items-center py-6">
           <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center mb-3">
-            <Megaphone className="w-10 h-10 text-primary" />
+            <Radio className="w-10 h-10 text-primary" />
           </div>
           <h3 className="text-xl font-bold text-foreground">{channel.name}</h3>
           <p className="text-sm text-muted-foreground mt-0.5">

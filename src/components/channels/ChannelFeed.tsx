@@ -1,5 +1,5 @@
 import { useRef } from 'react';
-import { ArrowLeft, Eye, Megaphone, Plus, Image, Play, Music } from 'lucide-react';
+import { ArrowLeft, Eye, Radio, Plus, Image, Play, Music } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { type Channel, type ChannelPost, type PostMedia } from '@/data/mockData';
 import { motion } from 'framer-motion';
@@ -132,7 +132,7 @@ export function ChannelFeed({ channel, posts, onBack, onOpenInfo, onCreatePost }
           onClick={onOpenInfo}
         >
           <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-            <Megaphone className="w-5 h-5 text-primary" />
+            <Radio className="w-5 h-5 text-primary" />
           </div>
           <div className="flex-1 min-w-0">
             <h3 className="font-semibold text-sm text-foreground truncate">{channel.name}</h3>
@@ -156,7 +156,7 @@ export function ChannelFeed({ channel, posts, onBack, onOpenInfo, onCreatePost }
       <div className="flex-1 overflow-y-auto px-4 py-4 space-y-4">
         {posts.length === 0 && (
           <div className="flex flex-col items-center justify-center h-full text-muted-foreground">
-            <Megaphone className="w-8 h-8 mb-2 opacity-50" />
+            <Radio className="w-8 h-8 mb-2 opacity-50" />
             <p className="text-sm">Нет публикаций</p>
             {channel.isOwner && (
               <button

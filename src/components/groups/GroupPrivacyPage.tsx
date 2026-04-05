@@ -5,7 +5,7 @@ import {
   Lock,
   MessageSquare,
   UserPlus,
-  Users,
+  UsersRound,
   Link,
   Copy,
   Check,
@@ -202,7 +202,7 @@ export function GroupPrivacyPage({ groupName, privacy, onBack, onChange }: Group
               onClick={() => setEditing('showMembers')}
               className="w-full flex items-center gap-3 px-4 py-3.5 hover:bg-muted/50 transition-colors text-left"
             >
-              <Users className="w-5 h-5 text-muted-foreground" />
+              <UsersRound className="w-5 h-5 text-muted-foreground" />
               <div className="flex-1">
                 <p className="text-sm text-foreground">Список участников</p>
                 <p className="text-xs text-muted-foreground">{MEMBERS_LABELS[privacy.showMembers]}</p>

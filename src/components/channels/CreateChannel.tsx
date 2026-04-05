@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from 'react';
-import { ArrowLeft, Check, Megaphone } from 'lucide-react';
+import { ArrowLeft, Check, Radio } from 'lucide-react';
 import { type Channel, DEFAULT_CHANNEL_PRIVACY } from '@/data/mockData';
 import { motion } from 'framer-motion';
 
@@ -52,7 +52,7 @@ export function CreateChannel({ onBack, onCreated }: CreateChannelProps) {
           {/* Icon */}
           <div className="flex flex-col items-center">
             <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center mb-2">
-              <Megaphone className="w-10 h-10 text-primary" />
+              <Radio className="w-10 h-10 text-primary" />
             </div>
             <p className="text-xs text-muted-foreground">Ваш канал</p>
           </div>

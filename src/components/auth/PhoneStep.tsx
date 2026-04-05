@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from 'react';
-import { MessageCircle, ArrowRight, Loader2 } from 'lucide-react';
+import { Zap, ArrowRight, Loader2 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { motion } from 'framer-motion';
 
@@ -49,7 +49,7 @@ export function PhoneStep() {
             transition={{ delay: 0.2, type: 'spring', stiffness: 200 }}
             className="w-24 h-24 rounded-3xl bg-gradient-to-br from-violet-500 to-fuchsia-500 flex items-center justify-center mb-5 glow-primary rotate-3"
           >
-            <MessageCircle className="w-12 h-12 text-white" />
+            <Zap className="w-12 h-12 text-white" />
           </motion.div>
           <h1 className="text-3xl font-extrabold text-gradient">Telleg</h1>
           <p className="text-sm text-muted-foreground mt-2">Мессенджер нового поколения</p>

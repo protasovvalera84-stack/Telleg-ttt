@@ -4,7 +4,7 @@ import {
   Globe,
   Lock,
   MessageSquare,
-  Users,
+  UsersRound,
   Forward,
   Link,
   Copy,
@@ -43,7 +43,7 @@ type EditingField = 'visibility' | 'comments' | 'showSubscribers' | null;
 
 const SETTINGS_CONFIG: { key: 'comments' | 'showSubscribers'; label: string; desc: string; icon: React.ReactNode }[] = [
   { key: 'comments', label: 'Комментарии', desc: 'Кто может комментировать посты', icon: <MessageSquare className="w-5 h-5" /> },
-  { key: 'showSubscribers', label: 'Список подписчиков', desc: 'Кто видит подписчиков канала', icon: <Users className="w-5 h-5" /> },
+  { key: 'showSubscribers', label: 'Список подписчиков', desc: 'Кто видит подписчиков канала', icon: <UsersRound className="w-5 h-5" /> },
 ];
 
 export function ChannelPrivacyPage({ channelName, privacy, onBack, onChange }: ChannelPrivacyPageProps) {

@@ -80,11 +80,14 @@ export function CodeStep() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background px-4">
+    <div className="min-h-screen flex items-center justify-center px-4 relative overflow-hidden">
+      <div className="absolute top-1/3 left-1/3 w-80 h-80 bg-violet-600/8 rounded-full blur-3xl" />
+      <div className="absolute bottom-1/3 right-1/4 w-64 h-64 bg-blue-500/6 rounded-full blur-3xl" />
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="w-full max-w-sm"
+        initial={{ opacity: 0, y: 30, scale: 0.95 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        transition={{ duration: 0.5 }}
+        className="w-full max-w-sm relative z-10"
       >
         {/* Back button */}
         <button
@@ -105,21 +108,22 @@ export function CodeStep() {
 
         {/* Code inputs */}
         <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="flex justify-center gap-3" onPaste={handlePaste}>
-            {code.map((digit, i) => (
-              <input
-                key={i}
-                ref={(el) => { inputRefs.current[i] = el; }}
-                type="text"
-                inputMode="numeric"
-                maxLength={1}
-                value={digit}
-                onChange={(e) => handleDigit(i, e.target.value)}
-                onKeyDown={(e) => handleKeyDown(i, e.key)}
-                className="w-14 h-14 text-center text-2xl font-bold bg-muted rounded-xl text-foreground focus:outline-none focus:ring-2 focus:ring-ring transition-all"
-              />
-            ))}
-          </div>
+          <div className="glass-card rounded-2xl p-6 space-y-5">
+            <div className="flex justify-center gap-3" onPaste={handlePaste}>
+              {code.map((digit, i) => (
+                <input
+                  key={i}
+                  ref={(el) => { inputRefs.current[i] = el; }}
+                  type="text"
+                  inputMode="numeric"
+                  maxLength={1}
+                  value={digit}
+                  onChange={(e) => handleDigit(i, e.target.value)}
+                  onKeyDown={(e) => handleKeyDown(i, e.key)}
+                  className="w-14 h-14 text-center text-2xl font-bold bg-muted/50 rounded-xl text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all border border-border/50 focus:border-primary/30"
+                />
+              ))}
+            </div>
 
           {error && (
             <motion.p
@@ -134,7 +138,7 @@ export function CodeStep() {
           <button
             type="submit"
             disabled={code.some((d) => !d) || loading}
-            className="w-full flex items-center justify-center gap-2 bg-primary text-primary-foreground rounded-xl py-3 text-sm font-medium transition-colors hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full flex items-center justify-center gap-2 btn-primary disabled:opacity-40 disabled:cursor-not-allowed"
           >
             {loading ? (
               <Loader2 className="w-5 h-5 animate-spin" />
@@ -142,6 +146,7 @@ export function CodeStep() {
               'Подтвердить'
             )}
           </button>
+          </div>
         </form>
 
         {/* Resend */}
@@ -163,8 +168,8 @@ export function CodeStep() {
           )}
         </div>
 
-        <p className="text-xs text-center text-muted-foreground mt-4">
-          Демо-код: <span className="font-mono font-bold text-foreground">1234</span>
+        <p className="text-[11px] text-center text-muted-foreground mt-4">
+          Демо-код: <span className="font-mono font-bold text-violet-400">1234</span>
         </p>
       </motion.div>
     </div>

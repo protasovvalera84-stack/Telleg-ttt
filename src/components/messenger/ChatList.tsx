@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Search, Menu, Settings, Users, MessageCircle, Plus, Megaphone, FolderOpen } from 'lucide-react';
+import { Search, LayoutGrid, SlidersHorizontal, UsersRound, Zap, Plus, Radio, FolderOpen } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Avatar } from './Avatar';
 import { chats as defaultChats, users, type Chat, type Channel, type ChatFolder } from '@/data/mockData';
@@ -116,7 +116,7 @@ export function ChatList({
             onClick={() => setMenuOpen(!menuOpen)}
             className="p-2 rounded-lg hover:bg-muted transition-colors"
           >
-            <Menu className="w-5 h-5 text-muted-foreground" />
+            <LayoutGrid className="w-5 h-5 text-muted-foreground" />
           </button>
           <AnimatePresence>
             {menuOpen && (
@@ -137,7 +137,7 @@ export function ChatList({
                   onClick={() => { onCreateChannel(); setMenuOpen(false); }}
                   className="flex items-center gap-3 w-full px-4 py-3 text-sm hover:bg-muted transition-colors text-foreground"
                 >
-                  <Megaphone className="w-4 h-4 text-muted-foreground" />
+                  <Radio className="w-4 h-4 text-muted-foreground" />
                   Новый канал
                 </button>
                 <button
@@ -151,14 +151,14 @@ export function ChatList({
                   onClick={() => { onOpenSettings(); setMenuOpen(false); }}
                   className="flex items-center gap-3 w-full px-4 py-3 text-sm hover:bg-muted transition-colors text-foreground"
                 >
-                  <Settings className="w-4 h-4 text-muted-foreground" />
+                  <SlidersHorizontal className="w-4 h-4 text-muted-foreground" />
                   Настройки
                 </button>
                 <button
                   onClick={() => { onOpenAdmin(); setMenuOpen(false); }}
                   className="flex items-center gap-3 w-full px-4 py-3 text-sm hover:bg-muted transition-colors text-foreground"
                 >
-                  <Users className="w-4 h-4 text-muted-foreground" />
+                  <UsersRound className="w-4 h-4 text-muted-foreground" />
                   Админ-панель
                 </button>
               </motion.div>
@@ -261,7 +261,7 @@ export function ChatList({
                 >
                   <div className="relative flex-shrink-0">
                     <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
-                      <Megaphone className="w-6 h-6 text-primary" />
+                      <Radio className="w-6 h-6 text-primary" />
                     </div>
                   </div>
                   <div className="flex-1 min-w-0">
@@ -285,7 +285,7 @@ export function ChatList({
 
             {visibleChannels.length === 0 && (
               <div className="flex flex-col items-center justify-center h-40 text-muted-foreground">
-                <Megaphone className="w-8 h-8 mb-2 opacity-50" />
+                <Radio className="w-8 h-8 mb-2 opacity-50" />
                 <p className="text-sm">Каналов пока нет</p>
               </div>
             )}
@@ -330,7 +330,7 @@ export function ChatList({
                   {isGroup ? (
                     <div className="relative flex-shrink-0">
                       <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
-                        <Users className="w-6 h-6 text-primary" />
+                        <UsersRound className="w-6 h-6 text-primary" />
                       </div>
                     </div>
                   ) : (
@@ -374,12 +374,12 @@ export function ChatList({
               <div className="flex flex-col items-center justify-center h-40 text-muted-foreground">
                 {effectiveTab === 'groups' ? (
                   <>
-                    <Users className="w-8 h-8 mb-2 opacity-50" />
+                    <UsersRound className="w-8 h-8 mb-2 opacity-50" />
                     <p className="text-sm">Групп пока нет</p>
                   </>
                 ) : (
                   <>
-                    <MessageCircle className="w-8 h-8 mb-2 opacity-50" />
+                    <Zap className="w-8 h-8 mb-2 opacity-50" />
                     <p className="text-sm">Чаты не найдены</p>
                   </>
                 )}

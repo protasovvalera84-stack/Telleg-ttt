@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from 'react';
-import { ArrowLeft, Check, Search, Users, Megaphone, MessageCircle } from 'lucide-react';
+import { ArrowLeft, Check, Search, UsersRound, Radio, Zap } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Avatar } from '@/components/messenger/Avatar';
 import { users, type ChatFolder, type Chat, type Channel } from '@/data/mockData';
@@ -259,7 +259,7 @@ export function FolderEditor({ folder, availableChats, availableChannels, onBack
                   >
                     {isGroup ? (
                       <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-                        <Users className="w-4 h-4 text-primary" />
+                        <UsersRound className="w-4 h-4 text-primary" />
                       </div>
                     ) : (
                       <Avatar name={chatName} size="sm" />
@@ -296,7 +296,7 @@ export function FolderEditor({ folder, availableChats, availableChannels, onBack
                     )}
                   >
                     <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-                      <Megaphone className="w-4 h-4 text-primary" />
+                      <Radio className="w-4 h-4 text-primary" />
                     </div>
                     <span className={cn('text-sm flex-1 truncate', isSelected ? 'text-primary font-medium' : 'text-foreground')}>
                       {ch.name}
@@ -313,7 +313,7 @@ export function FolderEditor({ folder, availableChats, availableChannels, onBack
 
               {filteredChats.length === 0 && filteredChannels.length === 0 && (
                 <div className="flex flex-col items-center justify-center py-6 text-muted-foreground">
-                  <MessageCircle className="w-6 h-6 mb-1 opacity-50" />
+                  <Zap className="w-6 h-6 mb-1 opacity-50" />
                   <p className="text-xs">Ничего не найдено</p>
                 </div>
               )}

@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, useMemo } from 'react';
-import { Send, Paperclip, Smile, Phone, MoreVertical, ArrowLeft, Users, Hash } from 'lucide-react';
+import { SendHorizontal, Link2, Smile, PhoneCall, Ellipsis, ArrowLeft, UsersRound, Hash } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Avatar } from './Avatar';
 import { EmojiPicker } from './EmojiPicker';
@@ -125,7 +125,7 @@ export function ChatWindow({
           ) : isGroup ? (
             <div className="relative flex-shrink-0">
               <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-                <Users className="w-5 h-5 text-primary" />
+                <UsersRound className="w-5 h-5 text-primary" />
               </div>
             </div>
           ) : (
@@ -142,11 +142,11 @@ export function ChatWindow({
         <div className="flex items-center gap-1">
           {!isGroup && !isTopic && (
             <button className="p-2 hover:bg-muted rounded-lg transition-colors">
-              <Phone className="w-4 h-4 text-muted-foreground" />
+              <PhoneCall className="w-4 h-4 text-muted-foreground" />
             </button>
           )}
           <button className="p-2 hover:bg-muted rounded-lg transition-colors">
-            <MoreVertical className="w-4 h-4 text-muted-foreground" />
+            <Ellipsis className="w-4 h-4 text-muted-foreground" />
           </button>
         </div>
       </div>
@@ -162,7 +162,7 @@ export function ChatWindow({
               </>
             ) : (
               <>
-                <Users className="w-8 h-8 mb-2 opacity-50" />
+                <UsersRound className="w-8 h-8 mb-2 opacity-50" />
                 <p className="text-sm">Нет сообщений</p>
               </>
             )}
@@ -205,7 +205,7 @@ export function ChatWindow({
       <div className="px-4 py-3 bg-card border-t border-border">
         <div className="flex items-center gap-2">
           <button className="p-2 hover:bg-muted rounded-lg transition-colors">
-            <Paperclip className="w-5 h-5 text-muted-foreground" />
+            <Link2 className="w-5 h-5 text-muted-foreground" />
           </button>
           <div className="flex-1 relative">
             <input
@@ -241,7 +241,7 @@ export function ChatWindow({
               input.trim() ? 'bg-primary text-primary-foreground hover:bg-primary/90' : 'text-muted-foreground',
             )}
           >
-            <Send className="w-5 h-5" />
+            <SendHorizontal className="w-5 h-5" />
           </button>
         </div>
       </div>

@@ -1,4 +1,4 @@
-import { ArrowLeft, Users, LogOut, Info, Calendar, UserPlus, Hash, ChevronRight, Shield, Globe, Lock } from 'lucide-react';
+import { ArrowLeft, UsersRound, LogOut, Info, Calendar, UserPlus, Hash, ChevronRight, Shield, Globe, Lock } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Avatar } from '@/components/messenger/Avatar';
 import { users, type Chat } from '@/data/mockData';
@@ -47,7 +47,7 @@ export function GroupInfo({ chat, topicCount, onBack, onLeave, onOpenTopics, onO
         {/* Group avatar & name */}
         <div className="flex flex-col items-center py-6">
           <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center mb-3">
-            <Users className="w-10 h-10 text-primary" />
+            <UsersRound className="w-10 h-10 text-primary" />
           </div>
           <h3 className="text-xl font-bold text-foreground">{chat.name}</h3>
           <p className="text-sm text-muted-foreground mt-0.5">

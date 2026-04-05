@@ -1,4 +1,4 @@
-import { MessageCircle } from 'lucide-react';
+import { Zap } from 'lucide-react';
 
 export function EmptyChat() {
   return (
@@ -8,7 +8,7 @@ export function EmptyChat() {
 
       <div className="relative z-10 flex flex-col items-center">
         <div className="w-20 h-20 rounded-3xl bg-gradient-to-br from-violet-500/10 to-fuchsia-500/10 flex items-center justify-center mb-5 border border-violet-500/10">
-          <MessageCircle className="w-10 h-10 text-violet-400/50" />
+          <Zap className="w-10 h-10 text-violet-400/50" />
         </div>
         <h3 className="text-lg font-semibold text-foreground/80 mb-1">Выберите чат</h3>
         <p className="text-sm text-muted-foreground">Выберите чат из списка для начала общения</p>

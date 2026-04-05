@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from 'react';
-import { ArrowLeft, ArrowRight, Check, Users, X } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Check, UsersRound, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Avatar } from '@/components/messenger/Avatar';
 import { users, type Chat, DEFAULT_GROUP_PRIVACY } from '@/data/mockData';
@@ -165,7 +165,7 @@ export function CreateGroup({ onBack, onCreated }: CreateGroupProps) {
               })}
               {filtered.length === 0 && (
                 <div className="flex flex-col items-center justify-center h-32 text-muted-foreground">
-                  <Users className="w-6 h-6 mb-2 opacity-50" />
+                  <UsersRound className="w-6 h-6 mb-2 opacity-50" />
                   <p className="text-sm">Пользователи не найдены</p>
                 </div>
               )}
@@ -183,7 +183,7 @@ export function CreateGroup({ onBack, onCreated }: CreateGroupProps) {
               {/* Group icon placeholder */}
               <div className="flex flex-col items-center">
                 <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center mb-2">
-                  <Users className="w-10 h-10 text-primary" />
+                  <UsersRound className="w-10 h-10 text-primary" />
                 </div>
                 <p className="text-xs text-muted-foreground">
                   {selectedIds.length} участник(ов)

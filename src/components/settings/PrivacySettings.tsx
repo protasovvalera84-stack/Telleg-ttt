@@ -5,9 +5,9 @@ import {
   Phone,
   Image,
   Clock,
-  Users,
+  UsersRound,
   Forward,
-  MessageCircle,
+  Zap,
   Shield,
   ChevronRight,
   Ban,
@@ -85,9 +85,9 @@ const SETTING_CONFIG: { key: SettingKey; label: string; icon: React.ReactNode; d
   { key: 'profilePhoto', label: 'Фото профиля', icon: <Image className="w-5 h-5" />, description: 'Кто может видеть ваше фото профиля' },
   { key: 'onlineStatus', label: 'Статус онлайн', icon: <Eye className="w-5 h-5" />, description: 'Кто может видеть, что вы в сети' },
   { key: 'lastSeen', label: 'Время последнего визита', icon: <Clock className="w-5 h-5" />, description: 'Кто может видеть, когда вы были в сети' },
-  { key: 'groups', label: 'Группы', icon: <Users className="w-5 h-5" />, description: 'Кто может добавлять вас в группы' },
+  { key: 'groups', label: 'Группы', icon: <UsersRound className="w-5 h-5" />, description: 'Кто может добавлять вас в группы' },
   { key: 'forwards', label: 'Пересылка сообщений', icon: <Forward className="w-5 h-5" />, description: 'Кто может пересылать ваши сообщения со ссылкой на вас' },
-  { key: 'calls', label: 'Звонки', icon: <MessageCircle className="w-5 h-5" />, description: 'Кто может вам звонить' },
+  { key: 'calls', label: 'Звонки', icon: <Zap className="w-5 h-5" />, description: 'Кто может вам звонить' },
 ];
 
 export function PrivacySettingsPage({ privacy, onBack, onChange }: PrivacySettingsPageProps) {
