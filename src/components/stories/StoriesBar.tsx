@@ -21,7 +21,6 @@ function getColor(name: string) {
 }
 
 export function StoriesBar({ stories, myStory, onViewStory, onCreateStory }: StoriesBarProps) {
-  // Sort: unviewed first, then viewed.
   const sorted = [...stories].sort((a, b) => {
     const aViewed = a.items.every(item => a.viewedIds.includes(item.id));
     const bViewed = b.items.every(item => b.viewedIds.includes(item.id));
@@ -33,33 +32,42 @@ export function StoriesBar({ stories, myStory, onViewStory, onCreateStory }: Sto
 
   return (
     <div className="flex items-center gap-3 px-3 py-2.5 overflow-x-auto scrollbar-none border-b border-border">
-      {/* My story / Create */}
+      {/* Create story button — always visible */}
       <button
-        onClick={hasMyStory ? () => onViewStory('me') : onCreateStory}
+        onClick={onCreateStory}
         className="flex flex-col items-center gap-1 flex-shrink-0"
       >
         <div className="relative">
-          <div className={cn(
-            'w-14 h-14 rounded-full flex items-center justify-center text-white font-bold text-sm',
-            hasMyStory ? 'ring-2 ring-primary ring-offset-2 ring-offset-card' : '',
-            'bg-muted',
-          )}>
-            {hasMyStory ? (
-              <span className="text-lg">{getInitials('Я')}</span>
-            ) : (
-              <Plus className="w-6 h-6 text-muted-foreground" />
-            )}
+          <div className="w-14 h-14 rounded-full flex items-center justify-center bg-muted">
+            <Plus className="w-6 h-6 text-muted-foreground" />
           </div>
-          {!hasMyStory && (
-            <div className="absolute -bottom-0.5 -right-0.5 w-5 h-5 bg-primary rounded-full flex items-center justify-center border-2 border-card">
-              <Plus className="w-3 h-3 text-primary-foreground" />
-            </div>
-          )}
+          <div className="absolute -bottom-0.5 -right-0.5 w-5 h-5 bg-primary rounded-full flex items-center justify-center border-2 border-card">
+            <Plus className="w-3 h-3 text-primary-foreground" />
+          </div>
         </div>
         <span className="text-[10px] text-muted-foreground w-14 text-center truncate">
-          {hasMyStory ? 'Моя история' : 'Добавить'}
+          Добавить
         </span>
       </button>
+
+      {/* My story — shown separately when exists */}
+      {hasMyStory && (
+        <button
+          onClick={() => onViewStory('me')}
+          className="flex flex-col items-center gap-1 flex-shrink-0"
+        >
+          <div className={cn(
+            'w-14 h-14 rounded-full flex items-center justify-center text-white font-bold text-sm',
+            'ring-2 ring-primary ring-offset-2 ring-offset-card',
+            'bg-gradient-to-br from-violet-500 to-fuchsia-500',
+          )}>
+            {getInitials('Я')}
+          </div>
+          <span className="text-[10px] text-foreground font-medium w-14 text-center truncate">
+            Моя
+          </span>
+        </button>
+      )}
 
       {/* Other users' stories */}
       {sorted.map(story => {
