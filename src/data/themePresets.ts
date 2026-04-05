@@ -93,6 +93,13 @@ const LV_NARROW_RIGHT: LayoutVariant = { id: 'narrow-right', name: 'Узкая (
 const LV_FLOATING: LayoutVariant = { id: 'floating', name: 'Плавающая панель', sidebarPosition: 'left', sidebarWidth: 'w-80', headerStyle: 'floating', rootClass: 'flex-row p-2 gap-2', sidebarClass: 'rounded-2xl overflow-hidden', contentClass: 'rounded-2xl overflow-hidden' };
 const LV_FLOATING_RIGHT: LayoutVariant = { id: 'floating-right', name: 'Плавающая (право)', sidebarPosition: 'right', sidebarWidth: 'w-80', headerStyle: 'floating', rootClass: 'flex-row-reverse p-2 gap-2', sidebarClass: 'rounded-2xl overflow-hidden', contentClass: 'rounded-2xl overflow-hidden' };
 const LV_COMPACT: LayoutVariant = { id: 'compact', name: 'Компактный', sidebarPosition: 'left', sidebarWidth: 'w-72', headerStyle: 'minimal', rootClass: 'flex-row', sidebarClass: '', contentClass: '' };
+// New layout variants
+const LV_ULTRA_WIDE: LayoutVariant = { id: 'ultra-wide', name: 'Ультра-широкая', sidebarPosition: 'left', sidebarWidth: 'w-[30rem]', headerStyle: 'inline', rootClass: 'flex-row', sidebarClass: '', contentClass: '' };
+const LV_FLOATING_NARROW: LayoutVariant = { id: 'floating-narrow', name: 'Плавающая узкая', sidebarPosition: 'left', sidebarWidth: 'w-72', headerStyle: 'floating', rootClass: 'flex-row p-3 gap-3', sidebarClass: 'rounded-3xl overflow-hidden', contentClass: 'rounded-3xl overflow-hidden' };
+const LV_SPLIT: LayoutVariant = { id: 'split', name: 'Разделённый', sidebarPosition: 'left', sidebarWidth: 'w-80', headerStyle: 'inline', rootClass: 'flex-row gap-1', sidebarClass: 'border-r-0', contentClass: 'border-l border-border' };
+const LV_CARD_LEFT: LayoutVariant = { id: 'card-left', name: 'Карточка (лево)', sidebarPosition: 'left', sidebarWidth: 'w-80', headerStyle: 'floating', rootClass: 'flex-row p-4 gap-4', sidebarClass: 'rounded-3xl overflow-hidden shadow-xl', contentClass: 'rounded-3xl overflow-hidden shadow-xl' };
+const LV_CARD_RIGHT: LayoutVariant = { id: 'card-right', name: 'Карточка (право)', sidebarPosition: 'right', sidebarWidth: 'w-80', headerStyle: 'floating', rootClass: 'flex-row-reverse p-4 gap-4', sidebarClass: 'rounded-3xl overflow-hidden shadow-xl', contentClass: 'rounded-3xl overflow-hidden shadow-xl' };
+const LV_MINIMAL: LayoutVariant = { id: 'minimal', name: 'Минимальный', sidebarPosition: 'left', sidebarWidth: 'w-60', headerStyle: 'minimal', rootClass: 'flex-row', sidebarClass: '', contentClass: '' };
 
 /* ── Helper to build a preset ── */
 
@@ -116,7 +123,7 @@ const C = (overrides: Partial<AppearanceConfig>): AppearanceConfig => ({
 export const THEME_PRESETS: ThemePreset[] = [
   p('midnight-violet', 'Полночный фиолет', 'Глубокий тёмный с фиолетовыми акцентами', '🌌',
     C({}), { '--background': '250 25% 5%', '--card': '250 20% 8%' }, [262, 280, 290],
-    [LV_CLASSIC_LEFT, LV_FLOATING, LV_WIDE_LEFT, LV_CLASSIC_RIGHT]),
+    [LV_CLASSIC_LEFT, LV_FLOATING, LV_WIDE_LEFT, LV_CLASSIC_RIGHT, LV_CARD_LEFT]),
 
   p('ocean-blue', 'Океан', 'Спокойный синий как глубокое море', '🌊',
     C({ colorTheme: 'blue', bubbleStyle: 'classic', chatBackground: 'gradient', fontFamily: 'inter', borderRadius: 'large' }),
@@ -212,4 +219,56 @@ export const THEME_PRESETS: ThemePreset[] = [
     C({ colorTheme: 'cyan', chatBackground: 'aurora', borderRadius: 'large' }),
     { '--background': '200 25% 5%', '--card': '200 20% 8%' }, [190, 160, 270, 300],
     [LV_CLASSIC_LEFT, LV_FLOATING, LV_CLASSIC_RIGHT, LV_WIDE_LEFT]),
+
+  // ── Themes 21-30 ──
+
+  p('volcanic-red', 'Вулкан', 'Раскалённая лава и пепел', '🌋',
+    C({ colorTheme: 'red', bubbleStyle: 'sharp', chatBackground: 'dark', fontFamily: 'roboto', borderRadius: 'small', glassEffects: false }),
+    { '--background': '5 18% 4%', '--card': '5 14% 7%' }, [0, 8, 355],
+    [LV_CLASSIC_LEFT, LV_SPLIT, LV_NARROW_LEFT, LV_CARD_LEFT, LV_COMPACT]),
+
+  p('mint-breeze', 'Мятный бриз', 'Свежий мятный ветер', '🍃',
+    C({ colorTheme: 'teal', bubbleStyle: 'pill', chatBackground: 'gradient', fontFamily: 'montserrat', borderRadius: 'full', uiScale: 'spacious' }),
+    { '--background': '165 18% 5%', '--card': '165 14% 8%' }, [165, 155, 175],
+    [LV_FLOATING, LV_FLOATING_NARROW, LV_WIDE_LEFT, LV_CARD_RIGHT]),
+
+  p('deep-ocean', 'Глубина', 'Тёмная бездна океана', '🐋',
+    C({ colorTheme: 'blue', fontSize: 'small', bubbleStyle: 'classic', chatBackground: 'waves', fontFamily: 'inter', borderRadius: 'medium' }),
+    { '--background': '220 28% 4%', '--card': '220 22% 7%' }, [215, 225, 205],
+    [LV_CLASSIC_LEFT, LV_CLASSIC_RIGHT, LV_NARROW_RIGHT, LV_FLOATING, LV_SPLIT]),
+
+  p('rose-gold', 'Розовое золото', 'Элегантный розово-золотой', '🌹',
+    C({ colorTheme: 'pink', bubbleStyle: 'rounded', chatBackground: 'aurora', fontFamily: 'montserrat', borderRadius: 'large', uiScale: 'spacious', sidebarWidth: 'wide' }),
+    { '--background': '340 15% 5%', '--card': '340 12% 8%' }, [340, 25, 330],
+    [LV_WIDE_LEFT, LV_CARD_LEFT, LV_FLOATING, LV_ULTRA_WIDE]),
+
+  p('electric-storm', 'Шторм', 'Электрическая буря', '⚡',
+    C({ colorTheme: 'amber', fontSize: 'medium', bubbleStyle: 'sharp', chatBackground: 'mesh', fontFamily: 'space', borderRadius: 'none', glassEffects: false }),
+    { '--background': '45 15% 4%', '--card': '45 12% 7%' }, [45, 35, 55],
+    [LV_CLASSIC_LEFT, LV_SPLIT, LV_COMPACT, LV_NARROW_LEFT, LV_CLASSIC_RIGHT]),
+
+  p('zen-garden', 'Дзен', 'Спокойствие японского сада', '🎋',
+    C({ colorTheme: 'green', fontSize: 'large', bubbleStyle: 'classic', chatBackground: 'default', fontFamily: 'inter', borderRadius: 'medium', uiScale: 'spacious', animations: true }),
+    { '--background': '145 12% 6%', '--card': '145 10% 9%' }, [145, 135, 155],
+    [LV_WIDE_LEFT, LV_FLOATING_NARROW, LV_CLASSIC_LEFT, LV_CARD_LEFT]),
+
+  p('synthwave', 'Синтвейв', 'Ретро-футуризм 80-х', '🎹',
+    C({ colorTheme: 'pink', bubbleStyle: 'pill', chatBackground: 'dark', fontFamily: 'space', borderRadius: 'full', glassEffects: true }),
+    { '--background': '290 22% 4%', '--card': '290 18% 7%' }, [320, 280, 190],
+    [LV_FLOATING, LV_FLOATING_RIGHT, LV_CARD_LEFT, LV_CARD_RIGHT, LV_NARROW_LEFT]),
+
+  p('carbon-fiber', 'Карбон', 'Технологичный углеродный стиль', '⚙️',
+    C({ colorTheme: 'blue', fontSize: 'small', bubbleStyle: 'rect', chatBackground: 'mesh', fontFamily: 'roboto', borderRadius: 'small', uiScale: 'compact', glassEffects: false, compactMessages: true }),
+    { '--background': '210 10% 4%', '--card': '210 8% 7%' }, [210, 200, 220],
+    [LV_COMPACT, LV_MINIMAL, LV_NARROW_LEFT, LV_SPLIT, LV_CLASSIC_LEFT]),
+
+  p('tropical-sunset', 'Тропики', 'Закат на тропическом острове', '🏝️',
+    C({ colorTheme: 'orange', bubbleStyle: 'rounded', chatBackground: 'gradient', fontFamily: 'montserrat', borderRadius: 'large' }),
+    { '--background': '20 20% 5%', '--card': '20 16% 8%' }, [20, 340, 45],
+    [LV_CLASSIC_LEFT, LV_FLOATING, LV_WIDE_LEFT, LV_CLASSIC_RIGHT, LV_CARD_LEFT]),
+
+  p('ice-crystal', 'Кристалл', 'Ледяные кристаллы и иней', '❄️',
+    C({ colorTheme: 'cyan', fontSize: 'medium', bubbleStyle: 'classic', chatBackground: 'stars', fontFamily: 'inter', borderRadius: 'medium', glassEffects: true }),
+    { '--background': '195 22% 4%', '--card': '195 18% 7%' }, [195, 185, 205, 220],
+    [LV_CLASSIC_LEFT, LV_FLOATING_NARROW, LV_CLASSIC_RIGHT, LV_NARROW_RIGHT, LV_CARD_RIGHT]),
 ];
