@@ -6,15 +6,7 @@ import {
   Shield,
   BarChart3,
   Palette,
-  Type,
-  Maximize2,
-  Sparkles,
-  Monitor,
   CircleDot,
-  Square,
-  RectangleHorizontal,
-  Check,
-  ChevronRight,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Avatar } from '@/components/messenger/Avatar';
@@ -236,29 +228,6 @@ export function AdminPanel({ onBack, settings, onSettingsChange }: AdminPanelPro
         {tab === 'customize' && (
           <div className="p-4 space-y-5">
 
-            {/* Font family */}
-            <Section icon={Type} title="Шрифт">
-              <div className="grid grid-cols-2 gap-2">
-                {(Object.entries(FONT_MAP) as [FontFamily, typeof FONT_MAP[FontFamily]][]).map(([key, f]) => (
-                  <OptionButton key={key} selected={settings.fontFamily === key} onClick={() => update({ fontFamily: key })}>
-                    <span style={{ fontFamily: f.css }} className="text-sm">{f.label}</span>
-                  </OptionButton>
-                ))}
-              </div>
-            </Section>
-
-            {/* Icon size */}
-            <Section icon={Maximize2} title="Размер иконок">
-              <div className="flex gap-2">
-                {(Object.entries(ICON_SIZE_MAP) as [IconSize, typeof ICON_SIZE_MAP[IconSize]][]).map(([key, s]) => (
-                  <OptionButton key={key} selected={settings.iconSize === key} onClick={() => update({ iconSize: key })} className="flex-1">
-                    <Sparkles className={cn(s.cls, 'mx-auto mb-1')} />
-                    <span className="text-[10px]">{s.label}</span>
-                  </OptionButton>
-                ))}
-              </div>
-            </Section>
-
             {/* Icon style */}
             <Section icon={CircleDot} title="Стиль иконок">
               <div className="flex gap-2">
@@ -274,79 +243,12 @@ export function AdminPanel({ onBack, settings, onSettingsChange }: AdminPanelPro
               </div>
             </Section>
 
-            {/* Wallpaper */}
-            <Section icon={Monitor} title="Фон чата">
-              <div className="grid grid-cols-3 gap-2">
-                {(Object.entries(WALLPAPER_MAP) as [WallpaperStyle, typeof WALLPAPER_MAP[WallpaperStyle]][]).map(([key, w]) => (
-                  <button
-                    key={key}
-                    onClick={() => update({ wallpaper: key })}
-                    className={cn(
-                      'rounded-xl border overflow-hidden transition-all',
-                      settings.wallpaper === key ? 'border-primary ring-1 ring-primary' : 'border-border hover:border-muted-foreground/30',
-                    )}
-                  >
-                    <div className={cn('h-12 bg-background', w.preview)} />
-                    <p className={cn('text-[10px] py-1.5 text-center', settings.wallpaper === key ? 'text-primary font-medium' : 'text-muted-foreground')}>
-                      {w.label}
-                    </p>
-                  </button>
-                ))}
-              </div>
-            </Section>
-
-            {/* UI Density */}
-            <Section icon={RectangleHorizontal} title="Плотность интерфейса">
-              <div className="flex gap-2">
-                {(Object.entries(DENSITY_MAP) as [UIDensity, typeof DENSITY_MAP[UIDensity]][]).map(([key, d]) => (
-                  <OptionButton key={key} selected={settings.uiDensity === key} onClick={() => update({ uiDensity: key })} className="flex-1">
-                    <div className="flex flex-col gap-0.5 items-center mb-1">
-                      <div className={cn('w-8 h-0.5 bg-current rounded', key === 'compact' ? 'mb-0' : key === 'spacious' ? 'mb-1.5' : 'mb-0.5')} />
-                      <div className="w-6 h-0.5 bg-current rounded opacity-50" />
-                    </div>
-                    <span className="text-[10px]">{d.label}</span>
-                  </OptionButton>
-                ))}
-              </div>
-            </Section>
-
-            {/* Border radius */}
-            <Section icon={Square} title="Скругление углов">
-              <div className="flex gap-2">
-                {(Object.entries(RADIUS_MAP) as [BorderRadius, typeof RADIUS_MAP[BorderRadius]][]).map(([key, r]) => (
-                  <OptionButton key={key} selected={settings.borderRadius === key} onClick={() => update({ borderRadius: key })} className="flex-1">
-                    <div className={cn('w-8 h-6 border-2 border-current mx-auto mb-1', key === 'sharp' ? 'rounded-sm' : key === 'pill' ? 'rounded-full' : 'rounded-lg')} />
-                    <span className="text-[10px]">{r.label}</span>
-                  </OptionButton>
-                ))}
-              </div>
-            </Section>
-
-            {/* Animations toggle */}
-            <Section icon={Sparkles} title="Анимации">
-              <button
-                onClick={() => update({ animations: !settings.animations })}
-                className="w-full flex items-center justify-between px-4 py-3 glass-card rounded-xl"
-              >
-                <span className="text-sm text-foreground">Анимации интерфейса</span>
-                <div className={cn(
-                  'w-11 h-6 rounded-full transition-colors relative',
-                  settings.animations ? 'bg-primary' : 'bg-muted-foreground/30',
-                )}>
-                  <div className={cn(
-                    'absolute top-0.5 w-5 h-5 rounded-full bg-white shadow transition-transform',
-                    settings.animations ? 'translate-x-5' : 'translate-x-0.5',
-                  )} />
-                </div>
-              </button>
-            </Section>
-
             {/* Reset */}
             <button
               onClick={() => { onSettingsChange(DEFAULT_SYSTEM_SETTINGS); applySystemSettings(DEFAULT_SYSTEM_SETTINGS); }}
               className="w-full text-center text-sm text-muted-foreground hover:text-foreground py-3 transition-colors"
             >
-              Сбросить все настройки
+              Сбросить настройки
             </button>
           </div>
         )}
