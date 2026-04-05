@@ -6,8 +6,10 @@ import {
   generateVariation,
   applyVariationToConfig,
   getVariationCSSOverrides,
+  getModifierClasses,
   type ThemePreset,
   type LayoutVariant,
+  type LayoutModifier,
 } from '@/data/themePresets';
 import { type AppearanceConfig, getThemeCSSVars, applyAppearanceToDOM, getBubbleClasses, getFontSizeClass, getBackgroundClass } from '@/components/settings/AppearanceSettings';
 import { motion } from 'framer-motion';
@@ -15,7 +17,7 @@ import { motion } from 'framer-motion';
 interface ThemeGalleryProps {
   currentConfig: AppearanceConfig;
   onBack: () => void;
-  onApply: (config: AppearanceConfig, cssOverrides: Record<string, string>, layout?: LayoutVariant) => void;
+  onApply: (config: AppearanceConfig, cssOverrides: Record<string, string>, layout?: LayoutVariant, modifiers?: LayoutModifier[]) => void;
 }
 
 function PreviewCard({ preset, isActive, onApply, onRandomize }: {
@@ -114,8 +116,8 @@ export function ThemeGallery({ currentConfig, onBack, onApply }: ThemeGalleryPro
   const handleApply = (preset: ThemePreset) => {
     const cssVars = { ...getThemeCSSVars(preset.config), ...preset.cssOverrides };
     setActiveId(preset.id);
-    const layout = preset.layoutVariants[0]; // Default: first layout variant
-    onApply(preset.config, cssVars, layout);
+    const layout = preset.layoutVariants[0];
+    onApply(preset.config, cssVars, layout, preset.modifiers);
   };
 
   const handleRandomize = (preset: ThemePreset) => {
@@ -126,9 +128,8 @@ export function ThemeGallery({ currentConfig, onBack, onApply }: ThemeGalleryPro
     const varCss = getVariationCSSOverrides(variation, baseHue);
     const cssVars = { ...getThemeCSSVars(variedConfig), ...preset.cssOverrides, ...varCss };
     setActiveId(preset.id);
-    // Pick the layout variant from the variation
     const layout = preset.layoutVariants.find(lv => lv.id === variation.layoutVariantId) || preset.layoutVariants[0];
-    onApply(variedConfig, cssVars, layout);
+    onApply(variedConfig, cssVars, layout, variation.activeModifiers);
   };
 
   return (
