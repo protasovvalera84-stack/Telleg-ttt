@@ -16,12 +16,13 @@ import { ChannelInfo } from '@/components/channels/ChannelInfo';
 import { CreatePost } from '@/components/channels/CreatePost';
 import { ChannelPrivacyPage } from '@/components/channels/ChannelPrivacyPage';
 import { PrivacySettingsPage } from '@/components/settings/PrivacySettings';
-import { AppearanceSettings } from '@/components/settings/AppearanceSettings';
+import { AppearanceSettings, type AppearanceConfig } from '@/components/settings/AppearanceSettings';
 import { FolderManager } from '@/components/folders/FolderManager';
 import { FolderEditor } from '@/components/folders/FolderEditor';
 import { StoriesBar } from '@/components/stories/StoriesBar';
 import { StoryViewer } from '@/components/stories/StoryViewer';
 import { CreateStory } from '@/components/stories/CreateStory';
+import { ThemeGallery } from '@/components/admin/ThemeGallery';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useAuth } from '@/contexts/AuthContext';
 import {
@@ -65,7 +66,8 @@ type View =
   | 'create-folder'
   | 'edit-folder'
   | 'create-story'
-  | 'view-story';
+  | 'view-story'
+  | 'theme-gallery';
 
 const Index = () => {
   const { privacy, updatePrivacy, appearance, updateAppearance, systemSettings, updateSystemSettings } = useAuth();
@@ -316,6 +318,14 @@ const Index = () => {
     setView('chat');
   };
 
+  const handleApplyTheme = (config: AppearanceConfig, cssOverrides: Record<string, string>) => {
+    updateAppearance(config);
+    const root = document.documentElement;
+    for (const [key, value] of Object.entries(cssOverrides)) {
+      root.style.setProperty(key, value);
+    }
+  };
+
   const handleBack = () => {
     if (activeTopicId) {
       setActiveTopicId(null);
@@ -459,6 +469,7 @@ const Index = () => {
             onDeleteChannel={handleDeleteChannel}
             onDeletePost={handleAdminDeletePost}
             onDeleteMedia={handleAdminDeleteMedia}
+            onOpenThemes={() => setView('theme-gallery')}
           />
         )}
         {view === 'create-group' && (
@@ -550,6 +561,13 @@ const Index = () => {
             initialUserId={viewingStoryUserId}
             onClose={() => { setViewingStoryUserId(null); setView('chat'); }}
             onMarkViewed={handleMarkStoryViewed}
+          />
+        )}
+        {view === 'theme-gallery' && (
+          <ThemeGallery
+            currentConfig={appearance}
+            onBack={() => setView('admin')}
+            onApply={handleApplyTheme}
           />
         )}
       </AnimatePresence>

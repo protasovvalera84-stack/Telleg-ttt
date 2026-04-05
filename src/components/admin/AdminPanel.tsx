@@ -13,6 +13,7 @@ import {
   Film,
   Music,
   X,
+  Sparkles,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Avatar } from '@/components/messenger/Avatar';
@@ -132,6 +133,8 @@ interface AdminPanelProps {
   onDeletePost: (channelId: string, postId: string) => void;
   /** Delete a specific media item from a post. */
   onDeleteMedia: (channelId: string, postId: string, mediaIndex: number) => void;
+  /** Open theme gallery. */
+  onOpenThemes: () => void;
 }
 
 type Tab = 'stats' | 'moderation' | 'customize';
@@ -140,6 +143,7 @@ export function AdminPanel({
   onBack, settings, onSettingsChange,
   allChats, allChannels, allChannelPosts,
   onDeleteChat, onDeleteChannel, onDeletePost, onDeleteMedia,
+  onOpenThemes,
 }: AdminPanelProps) {
   const [tab, setTab] = useState<Tab>('stats');
   const [confirmId, setConfirmId] = useState<string | null>(null);
@@ -391,6 +395,20 @@ export function AdminPanel({
         {/* ── Customize tab ── */}
         {tab === 'customize' && (
           <div className="p-4 space-y-5">
+            {/* Theme gallery button */}
+            <button
+              onClick={onOpenThemes}
+              className="w-full flex items-center gap-3 glass-card rounded-xl p-4 hover:bg-muted/30 transition-colors"
+            >
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-500/20 to-fuchsia-500/20 flex items-center justify-center flex-shrink-0">
+                <Sparkles className="w-5 h-5 text-violet-400" />
+              </div>
+              <div className="flex-1 text-left">
+                <p className="text-sm font-semibold text-foreground">Шаблоны дизайна</p>
+                <p className="text-[11px] text-muted-foreground">20 готовых тем с вариациями</p>
+              </div>
+            </button>
+
             <Section icon={CircleDot} title="Стиль иконок">
               <div className="flex gap-2">
                 {([
