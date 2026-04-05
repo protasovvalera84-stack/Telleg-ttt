@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
 import { type PrivacySettings, DEFAULT_PRIVACY } from '@/components/settings/PrivacySettings';
-import { type AppearanceConfig, DEFAULT_APPEARANCE, getThemeCSSVars } from '@/components/settings/AppearanceSettings';
+import { type AppearanceConfig, DEFAULT_APPEARANCE, getThemeCSSVars, applyAppearanceToDOM } from '@/components/settings/AppearanceSettings';
 import { type SystemSettings, DEFAULT_SYSTEM_SETTINGS, applySystemSettings } from '@/components/admin/AdminPanel';
 
 /** Simulated SMS verification code. In production, this would come from a backend. */
@@ -105,6 +105,7 @@ function applyThemeToDOM(config: AppearanceConfig) {
   for (const [key, value] of Object.entries(vars)) {
     root.style.setProperty(key, value);
   }
+  applyAppearanceToDOM(config);
 }
 
 export function AuthProvider({ children }: { children: ReactNode }) {
