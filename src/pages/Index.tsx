@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { cn } from '@/lib/utils';
 import { ChatList } from '@/components/messenger/ChatList';
 import { ChatWindow } from '@/components/messenger/ChatWindow';
 import { EmptyChat } from '@/components/messenger/EmptyChat';
@@ -23,6 +24,7 @@ import { StoriesBar } from '@/components/stories/StoriesBar';
 import { StoryViewer } from '@/components/stories/StoryViewer';
 import { CreateStory } from '@/components/stories/CreateStory';
 import { ThemeGallery } from '@/components/admin/ThemeGallery';
+import { type LayoutVariant } from '@/data/themePresets';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useAuth } from '@/contexts/AuthContext';
 import {
@@ -86,6 +88,7 @@ const Index = () => {
   const [stories, setStories] = useState<UserStory[]>(defaultStories);
   const [myStory, setMyStory] = useState<UserStory>({ userId: 'me', items: [], viewedIds: [] });
   const [viewingStoryUserId, setViewingStoryUserId] = useState<string | null>(null);
+  const [activeLayout, setActiveLayout] = useState<LayoutVariant | null>(null);
   const isMobile = useIsMobile();
 
   // On mobile: show sidebar when nothing is actively open, OR when viewing topic list.
@@ -318,12 +321,13 @@ const Index = () => {
     setView('chat');
   };
 
-  const handleApplyTheme = (config: AppearanceConfig, cssOverrides: Record<string, string>) => {
+  const handleApplyTheme = (config: AppearanceConfig, cssOverrides: Record<string, string>, layout?: LayoutVariant) => {
     updateAppearance(config);
     const root = document.documentElement;
     for (const [key, value] of Object.entries(cssOverrides)) {
       root.style.setProperty(key, value);
     }
+    if (layout) setActiveLayout(layout);
   };
 
   const handleBack = () => {
@@ -429,15 +433,21 @@ const Index = () => {
     return <EmptyChat />;
   };
 
+  // Layout variant classes.
+  const layoutRoot = activeLayout?.rootClass || 'flex-row';
+  const layoutSidebarW = activeLayout?.sidebarWidth || 'w-80 xl:w-96';
+  const layoutSidebarCls = activeLayout?.sidebarClass || '';
+  const layoutContentCls = activeLayout?.contentClass || '';
+
   return (
-    <div className="h-screen flex overflow-hidden relative">
+    <div className={cn('h-screen flex overflow-hidden relative', !isMobile && layoutRoot)}>
       {showSidebar && (
-        <div className={isMobile ? 'w-full' : 'w-80 xl:w-96 flex-shrink-0'}>
+        <div className={cn(isMobile ? 'w-full' : cn(layoutSidebarW, 'flex-shrink-0'), layoutSidebarCls)}>
           {renderSidebar()}
         </div>
       )}
       {showContent && (
-        <div className="flex-1 min-w-0">
+        <div className={cn('flex-1 min-w-0', layoutContentCls)}>
           {renderContent()}
         </div>
       )}
