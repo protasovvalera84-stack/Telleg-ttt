@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, useMemo } from 'react';
-import { SendHorizontal, Link2, Smile, PhoneCall, Ellipsis, ArrowLeft, UsersRound, Hash } from 'lucide-react';
+import { SendHorizontal, Link2, Smile, PhoneCall, Video, Ellipsis, ArrowLeft, UsersRound, Hash, Lock } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Avatar } from './Avatar';
 import { EmojiPicker } from './EmojiPicker';
@@ -20,6 +20,8 @@ interface ChatWindowProps {
   /** External messages for topics (managed by parent). */
   topicMessages?: Message[];
   onTopicMessageSent?: (msg: Message) => void;
+  onVoiceCall?: (contactName: string) => void;
+  onVideoCall?: (contactName: string) => void;
 }
 
 export function ChatWindow({
@@ -32,6 +34,8 @@ export function ChatWindow({
   topicIcon,
   topicMessages,
   onTopicMessageSent,
+  onVoiceCall,
+  onVideoCall,
 }: ChatWindowProps) {
   const allChats = [...defaultChats, ...extraChats];
   const chat = allChats.find(c => c.id === chatId);
@@ -141,10 +145,18 @@ export function ChatWindow({
 
         <div className="flex items-center gap-1">
           {!isGroup && !isTopic && (
-            <button className="p-2 hover:bg-muted rounded-lg transition-colors">
-              <PhoneCall className="w-4 h-4 text-muted-foreground" />
-            </button>
+            <>
+              <button onClick={() => onVoiceCall?.(displayName)} className="p-2 hover:bg-muted rounded-lg transition-colors" title="Голосовой звонок">
+                <PhoneCall className="w-4 h-4 text-muted-foreground" />
+              </button>
+              <button onClick={() => onVideoCall?.(displayName)} className="p-2 hover:bg-muted rounded-lg transition-colors" title="Видеозвонок">
+                <Video className="w-4 h-4 text-muted-foreground" />
+              </button>
+            </>
           )}
+          <div className="flex items-center gap-0.5 px-1.5 py-1 rounded-md bg-emerald-500/10" title="E2E зашифровано">
+            <Lock className="w-3 h-3 text-emerald-400" />
+          </div>
           <button className="p-2 hover:bg-muted rounded-lg transition-colors">
             <Ellipsis className="w-4 h-4 text-muted-foreground" />
           </button>

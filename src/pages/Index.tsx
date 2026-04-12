@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { cn } from '@/lib/utils';
 import { ChatList } from '@/components/messenger/ChatList';
 import { ChatWindow } from '@/components/messenger/ChatWindow';
 import { EmptyChat } from '@/components/messenger/EmptyChat';
@@ -17,14 +16,14 @@ import { ChannelInfo } from '@/components/channels/ChannelInfo';
 import { CreatePost } from '@/components/channels/CreatePost';
 import { ChannelPrivacyPage } from '@/components/channels/ChannelPrivacyPage';
 import { PrivacySettingsPage } from '@/components/settings/PrivacySettings';
-import { AppearanceSettings, type AppearanceConfig, applyAppearanceToDOM, getThemeCSSVars } from '@/components/settings/AppearanceSettings';
+import { AppearanceSettings } from '@/components/settings/AppearanceSettings';
+import { SecuritySettings } from '@/components/settings/SecuritySettings';
+import { CallScreen, type CallType } from '@/components/calls/CallScreen';
 import { FolderManager } from '@/components/folders/FolderManager';
 import { FolderEditor } from '@/components/folders/FolderEditor';
 import { StoriesBar } from '@/components/stories/StoriesBar';
 import { StoryViewer } from '@/components/stories/StoryViewer';
 import { CreateStory } from '@/components/stories/CreateStory';
-import { ThemeGallery } from '@/components/admin/ThemeGallery';
-import { type LayoutVariant, type LayoutModifier, getModifierClasses } from '@/data/themePresets';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useAuth } from '@/contexts/AuthContext';
 import {
@@ -69,7 +68,8 @@ type View =
   | 'edit-folder'
   | 'create-story'
   | 'view-story'
-  | 'theme-gallery';
+  | 'security'
+  | 'call';
 
 const Index = () => {
   const { privacy, updatePrivacy, appearance, updateAppearance, systemSettings, updateSystemSettings } = useAuth();
@@ -88,8 +88,8 @@ const Index = () => {
   const [stories, setStories] = useState<UserStory[]>(defaultStories);
   const [myStory, setMyStory] = useState<UserStory>({ userId: 'me', items: [], viewedIds: [] });
   const [viewingStoryUserId, setViewingStoryUserId] = useState<string | null>(null);
-  const [activeLayout, setActiveLayout] = useState<LayoutVariant | null>(null);
-  const [activeModifiers, setActiveModifiers] = useState<LayoutModifier[]>([]);
+  const [callType, setCallType] = useState<CallType | null>(null);
+  const [callContactName, setCallContactName] = useState('');
   const isMobile = useIsMobile();
 
   // On mobile: show sidebar when nothing is actively open, OR when viewing topic list.
@@ -322,21 +322,7 @@ const Index = () => {
     setView('chat');
   };
 
-  const handleApplyTheme = (config: AppearanceConfig, cssOverrides: Record<string, string>, layout?: LayoutVariant, modifiers?: LayoutModifier[]) => {
-    // Apply the config to state (persists to localStorage via AuthContext).
-    updateAppearance(config);
-    // Apply CSS variables to :root.
-    const root = document.documentElement;
-    const themeVars = getThemeCSSVars(config);
-    for (const [key, value] of Object.entries({ ...themeVars, ...cssOverrides })) {
-      root.style.setProperty(key, value);
-    }
-    // Apply font, animations, etc.
-    applyAppearanceToDOM(config);
-    // Apply layout and modifiers.
-    if (layout) setActiveLayout(layout);
-    if (modifiers) setActiveModifiers(modifiers);
-  };
+
 
   const handleBack = () => {
     if (activeTopicId) {
@@ -434,6 +420,8 @@ const Index = () => {
           onBack={isMobile ? handleBack : undefined}
           onOpenGroupInfo={activeChat?.type === 'group' ? () => setView('group-info') : undefined}
           extraChats={createdGroups}
+          onVoiceCall={(name) => { setCallContactName(name); setCallType('voice'); setView('call'); }}
+          onVideoCall={(name) => { setCallContactName(name); setCallType('video'); setView('call'); }}
         />
       );
     }
@@ -441,27 +429,20 @@ const Index = () => {
     return <EmptyChat />;
   };
 
-  // Layout variant classes.
-  const layoutRoot = activeLayout?.rootClass || 'flex-row';
-  const layoutSidebarW = activeLayout?.sidebarWidth || 'w-80 xl:w-96';
-  const layoutSidebarCls = activeLayout?.sidebarClass || '';
-  const layoutContentCls = activeLayout?.contentClass || '';
-  const modCls = getModifierClasses(activeModifiers);
-
   return (
-    <div className={cn('h-screen flex overflow-hidden relative', !isMobile && layoutRoot, modCls.root)}>
+    <div className="h-screen flex overflow-hidden relative">
       {showSidebar && (
-        <div className={cn(isMobile ? 'w-full' : cn(layoutSidebarW, 'flex-shrink-0'), layoutSidebarCls, modCls.sidebar)}>
+        <div className={isMobile ? 'w-full' : 'w-80 xl:w-96 flex-shrink-0'}>
           {renderSidebar()}
         </div>
       )}
       {showContent && (
-        <div className={cn('flex-1 min-w-0', layoutContentCls, modCls.content)}>
+        <div className="flex-1 min-w-0">
           {renderContent()}
         </div>
       )}
       <AnimatePresence>
-        {view === 'settings' && <ProfileSettings onBack={() => setView('chat')} onOpenPrivacy={() => setView('privacy')} onOpenAppearance={() => setView('appearance')} />}
+        {view === 'settings' && <ProfileSettings onBack={() => setView('chat')} onOpenPrivacy={() => setView('privacy')} onOpenAppearance={() => setView('appearance')} onOpenSecurity={() => setView('security')} />}
         {view === 'privacy' && (
           <PrivacySettingsPage
             privacy={privacy}
@@ -474,7 +455,6 @@ const Index = () => {
             config={appearance}
             onBack={() => setView('settings')}
             onChange={updateAppearance}
-            onOpenThemes={() => setView('theme-gallery')}
           />
         )}
         {view === 'admin' && (
@@ -489,7 +469,6 @@ const Index = () => {
             onDeleteChannel={handleDeleteChannel}
             onDeletePost={handleAdminDeletePost}
             onDeleteMedia={handleAdminDeleteMedia}
-            onOpenThemes={() => setView('theme-gallery')}
           />
         )}
         {view === 'create-group' && (
@@ -583,13 +562,17 @@ const Index = () => {
             onMarkViewed={handleMarkStoryViewed}
           />
         )}
-        {view === 'theme-gallery' && (
-          <ThemeGallery
-            currentConfig={appearance}
-            onBack={() => setView('appearance')}
-            onApply={handleApplyTheme}
+        {view === 'security' && (
+          <SecuritySettings onBack={() => setView('settings')} />
+        )}
+        {view === 'call' && callType && (
+          <CallScreen
+            contactName={callContactName}
+            callType={callType}
+            onEnd={() => { setCallType(null); setView('chat'); }}
           />
         )}
+
       </AnimatePresence>
     </div>
   );
