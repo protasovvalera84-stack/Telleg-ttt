@@ -1,4 +1,4 @@
-import { ArrowLeft, Camera, User, LogOut, Shield, ChevronRight, Palette } from 'lucide-react';
+import { ArrowLeft, Camera, User, LogOut, Shield, ShieldCheck, ChevronRight, Palette } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useAuth } from '@/contexts/AuthContext';
 
@@ -6,9 +6,10 @@ interface ProfileSettingsProps {
   onBack: () => void;
   onOpenPrivacy: () => void;
   onOpenAppearance: () => void;
+  onOpenSecurity?: () => void;
 }
 
-export function ProfileSettings({ onBack, onOpenPrivacy, onOpenAppearance }: ProfileSettingsProps) {
+export function ProfileSettings({ onBack, onOpenPrivacy, onOpenAppearance, onOpenSecurity }: ProfileSettingsProps) {
   const { user, logout, privacy, appearance } = useAuth();
 
   const displayName = user?.name || 'Пользователь';
@@ -104,6 +105,23 @@ export function ProfileSettings({ onBack, onOpenPrivacy, onOpenAppearance }: Pro
             </div>
             <ChevronRight className="w-4 h-4 text-muted-foreground" />
           </button>
+
+          {/* Security settings button */}
+          {onOpenSecurity && (
+            <button
+              onClick={onOpenSecurity}
+              className="w-full flex items-center gap-3 bg-muted rounded-xl p-4 hover:bg-muted/80 transition-colors"
+            >
+              <div className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center flex-shrink-0">
+                <ShieldCheck className="w-5 h-5 text-emerald-400" />
+              </div>
+              <div className="flex-1 text-left">
+                <p className="text-sm font-medium text-foreground">Безопасность</p>
+                <p className="text-xs text-emerald-400/70">E2E шифрование активно</p>
+              </div>
+              <ChevronRight className="w-4 h-4 text-muted-foreground" />
+            </button>
+          )}
 
           {/* Blocked users count */}
           {privacy.blockedUsers.length > 0 && (

@@ -1,4 +1,4 @@
-import { ArrowLeft, Palette, Type, MessageSquare, Wallpaper, Check, Monitor, Square, Sparkles, SunMoon, Maximize2, LayoutGrid, Wand2 } from 'lucide-react';
+import { ArrowLeft, Palette, Type, MessageSquare, Wallpaper, Check, Monitor, Square, Sparkles, SunMoon, Maximize2, LayoutGrid } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
 
@@ -181,10 +181,9 @@ interface AppearanceSettingsProps {
   config: AppearanceConfig;
   onBack: () => void;
   onChange: (config: AppearanceConfig) => void;
-  onOpenThemes?: () => void;
 }
 
-export function AppearanceSettings({ config, onBack, onChange, onOpenThemes }: AppearanceSettingsProps) {
+export function AppearanceSettings({ config, onBack, onChange }: AppearanceSettingsProps) {
   const update = (partial: Partial<AppearanceConfig>) => {
     const next = { ...config, ...partial };
     onChange(next);
@@ -235,24 +234,6 @@ export function AppearanceSettings({ config, onBack, onChange, onOpenThemes }: A
             </div>
           </div>
         </div>
-
-        {/* ── Theme presets button ── */}
-        {onOpenThemes && (
-          <div className="px-4 pt-3">
-            <button
-              onClick={onOpenThemes}
-              className="w-full flex items-center gap-3 glass-card rounded-2xl p-4 hover:bg-muted/30 transition-all group"
-            >
-              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-violet-500/20 to-fuchsia-500/20 flex items-center justify-center flex-shrink-0 group-hover:from-violet-500/30 group-hover:to-fuchsia-500/30 transition-all">
-                <Wand2 className="w-6 h-6 text-violet-400" />
-              </div>
-              <div className="flex-1 text-left">
-                <p className="text-sm font-bold text-foreground">30 готовых шаблонов</p>
-                <p className="text-[11px] text-muted-foreground">Применить тему в один клик с вариациями</p>
-              </div>
-            </button>
-          </div>
-        )}
 
         {/* ── Color theme ── */}
         <Section>
